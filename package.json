@@ -1,0 +1,46 @@
+{
+  "name": "mrthunder",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www"
+  },
+  "dependencies": {
+    "body-parser": "~1.12.4",
+    "cookie-parser": "~1.3.5",
+    "debug": "~2.2.0",
+    "express": "~4.12.4",
+    "jade": "~1.9.2",
+    "morgan": "~1.5.3",
+    "serve-favicon": "~2.2.1",
+    "bluebird": "~2.9.27",    
+    "pm2": "~0.12.16"
+  },
+  "devDependencies": {
+    "clean-css": "~3.3.1",
+    "jasmine": "~2.3.1",
+    "jasmine-as-promised": "~0.0.8",
+    "less": "~2.5.1",
+    "multipipe": "~0.1.2",
+    "merge2": "~0.3.5",
+    "uglify-js": "~2.4.23",
+    "run-sequence": "~1.1.0",
+    "tiny-lr": "~0.1.5",
+    "typescript": "~1.5.0-beta",
+    "gulp": "~3.9.0",
+    "gulp-autoprefixer": "~2.3.1",
+    "gulp-changed": "~1.2.1",
+    "gulp-clean": "~0.3.1",
+    "gulp-concat": "~2.5.2",
+    "gulp-imagemin": "~2.2.1",
+    "gulp-less": "~3.0.3",
+    "gulp-livereload": "~3.8.0",
+    "gulp-minify-css": "~1.1.6",
+    "gulp-nodemon": "~2.0.3",
+    "gulp-rename": "~1.2.2",
+    "gulp-sourcemaps": "~1.5.2",
+    "gulp.spritesmith": "~3.8.2",
+    "gulp-typescript": "~2.7.6",
+    "gulp-uglify": "~1.2.0"
+  }
+}
