@@ -3,7 +3,7 @@
 // Definitions by: Satoru Kimura <https://github.com/gyohk>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped  
 
-declare module _dat{
+declare module dat {
     export class GUI {
         constructor(option?: GUIParams);
 
@@ -54,7 +54,4 @@ declare module _dat{
         onChange: (value?: any) => void;
         onFinishChange: (value?: any) => void;
     }
-}
-declare module "dat"{
-    export = dat;        
 }
