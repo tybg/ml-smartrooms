@@ -1,32 +1,35 @@
 /// <reference path="../../../typings/threejs/three.d.ts" />
 /// <reference path="../../../typings/dat-gui/dat-gui.d.ts" />
 "use strict";
-
+import _ = require('lodash');
 var boxExample : ThreePsTutorial.BoxExample;
 
 module ThreePsTutorial{
 	export class BoxExample{
 		gui : dat.GUI = new dat.GUI();
+		public guiConfigProps
 		public scene : THREE.Scene = new THREE.Scene();
 		public renderer : THREE.Renderer = new THREE.WebGLRenderer();
 		public light : THREE.AmbientLight = new THREE.AmbientLight(0xffffff);
-		public otherLight = new THREE.DirectionalLight(0xffffff);
+		public otherLight = new THREE.SpotLight(0xffffff, 1, 100, 2);
 		public camera : THREE.PerspectiveCamera;
 		public box : THREE.Mesh;
 		constructor(){
 			this.renderer.setSize(window.innerWidth, window.innerHeight);
 			document.getElementById('webgl-container').appendChild(this.renderer.domElement);
 			//this.scene.add(this.light);
-			this.otherLight.position.setZ(15);
+			this.otherLight.position.setZ(25);
+			this.otherLight.name = 'SpotLight';
 			this.scene.add(this.otherLight);
-			this.camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 1, 1000);
+			this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
 			this.camera.position.z = 100;
 			this.scene.add(this.camera);
 			
-			this.box = new THREE.Mesh(new THREE.BoxGeometry(20, 20, 20), new THREE.MeshPhongMaterial({ color: 0x0000ff }));
+			this.box = new THREE.Mesh(new THREE.BoxGeometry(20, 20, 20), new THREE.MeshPhongMaterial({ ambientColor: 0x0000ff, specular: 15 }));
 			this.box.name = 'box';
 			this.scene.add(this.box);
 			this.addGui();
+			this.addLightGui(this.otherLight);
 			this.renderScene();
 		}
 		
@@ -49,6 +52,17 @@ module ThreePsTutorial{
 				rotFld.open();
 			if(openPos)
 				posFld.open();
+		}
+		
+		private addLightGui(light : THREE.Light){
+			var lightFld = this.gui.addFolder(light.name || light.type);
+			lightFld.addColor(light, 'color');
+			if(_.has(light, 'angle'))
+				lightFld.add(light, 'angle').step(Math.PI / 12);
+			if(_.has(light, 'distance'))
+				lightFld.add(light, 'distance');
+			if(_.has(light, 'intensity'))				
+				lightFld.add(light, 'intensity');			
 		}
 		
 		private addGui(){

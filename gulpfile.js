@@ -4,6 +4,7 @@
 /// <reference path="typings/gulp-minify-css/gulp-minify-css.d.ts" />
 /// <reference path="typings/gulp-sourcemaps/gulp-sourcemaps.d.ts" />
 /// <reference path="typings/gulp-typescript/gulp-typescript.d.ts" />
+/// <reference path="typings/browserify/browserify.d.ts" />
 
 var paths = {
 	src: {
@@ -15,17 +16,19 @@ var paths = {
         },
         typescripts: 'public/assets/ts/*.ts'
 	},
-	dist: './public/build'
+	dist: __dirname + '/public/build'
 },
+    browserify = require('browserify'),
+    watchify = require('watchify'),
 	gulp = require('gulp'),
+    source = require('vinyl-source-stream'),
+    buffer = require('vinyl-buffer'),
     prefixer = require('gulp-autoprefixer'),
 	changed = require('gulp-changed'),
 	concat = require('gulp-concat'),
     gulpif = require('gulp-if'),
 	imagemin = require('gulp-imagemin'),
 	less = require('gulp-less'),
-	//livereload = require('gulp-livereload'),
-	//lr = require('tiny-lr'),
 	minify = require('gulp-minify-css'),
     nodemon = require('gulp-nodemon'),
     plumber = require('gulp-plumber'),
@@ -39,12 +42,15 @@ var paths = {
     merge = require('merge2'),
     pm2 = require('pm2'),
 	runSequence = require('run-sequence');
-	//,server = lr();
 
-gulp.plumbedSrc = function( ){
+gulp.plumbedSrc = function(){
   return gulp.src.apply(gulp, arguments)
     .pipe(plumber(gutil.log));
 };
+
+var wf = watchify(browserify({
+    
+}));
 
 gulp.task('less', function() {
     return pipe(
@@ -70,19 +76,19 @@ gulp.task('jslib', function(){
 		uglify(),
 		rename('lib.min.js'),
 		gulp.dest(paths.dist + '/js')
-		//,livereload(server)
 	);
 });
 
-gulp.task('ts', function() {
+gulp.task('jts', function() {
+    /* non-Browserify
     var tsResult = gulp.plumbedSrc(paths.src.typescripts)
-                    .pipe(ts({ typescript: require('typescript'), target: 'ES5', module: 'commonjs' }));
+                    .pipe(ts({ typescript: require('typescript'), target: 'ES5', module: 'amd' }));
     tsResult.js.pipe(gulp.dest(paths.dist + '/ts'))
         .pipe(concat('pubts.js'))
         .pipe(gulp.dest(paths.dist + '/ts'))
         .pipe(uglify())
         .pipe(rename('pubts.min.js'))
-        .pipe(gulp.dest(paths.dist + '/ts'));
+        .pipe(gulp.dest(paths.dist + '/ts'));*/
     /*return merge([ // Merge the two output streams, so this task is finished when the IO of both operations are done. 
         tsResult.dts.pipe(gulp.dest(paths.dist + '/js/typings')),
         tsResult.js.pipe(gulp.dest(paths.dist + '/js'))
@@ -113,20 +119,12 @@ gulp.task('sprite', function() {
     ]);    
 });
 
-gulp.task('livereload', function() {
-    /*server.listen(35729, function(err) {
-        if (err) {
-            return console.log(err);
-        }
-    });*/
-});
-
 gulp.task('watchlib', function(){
     gulp.watch(paths.src.scripts.lib, ['jslib']);    
 });
 
 gulp.task('watch', function() {
-    gulp.watch(paths.src.typescripts, ['ts']);
+    gulp.watch(paths.src.typescripts, ['jts']);
     gulp.watch(paths.src.images, ['images']);
     gulp.watch(paths.src.less, function() {
         runSequence('sprite', 'less');
@@ -162,5 +160,5 @@ gulp.task('serve', function () {
 gulp.task('default', ['watch', 'serve']);
 gulp.task('watchall', ['watch', 'watchlib', 'serve']);
 gulp.task('stage', ['watch', 'pm2']);
-gulp.task('build', runSequence('sprite', 'less', ['images', 'jslib']));
+gulp.task('build', runSequence('sprite', 'less', ['images', 'jslib'], 'jts'));
 //'fonts'
