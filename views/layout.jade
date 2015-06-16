@@ -2,10 +2,10 @@ doctype html
 html
   head
     title= title
-    link(rel='stylesheet', href='/build/css/main.css')
+    link(rel='stylesheet', href='/build/styles/main.css')
     block headblock
   body
     block content
-    script(type='text/javascript', src='/build/js/lib.js')
-    script(type='text/javascript', data-main='/build/js/index' src='/assets/scripts/require.min.js')
+    script(type='text/javascript', src='/build/scripts/lib.js')
+    script(type='text/javascript', data-main='/build/scripts/index' src='/build/scripts/require.min.js')
     //script(type='text/javascript', src='http://localhost:35729/livereload.js?snipver=1')

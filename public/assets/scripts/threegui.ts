@@ -14,7 +14,7 @@ export class EnvMapper implements MapWithKeys {
 	refraction : THREE.Texture;
 	keys : string[] = ['none', 'reflection', 'refraction'];
 	constructor() {
-		var path = '/build/img/examples/SwedishRoyalCastle/';
+		var path = '/build/images/examples/SwedishRoyalCastle/';
 		var format : string = '.jpg';
 		var urls : string[] = _.map(['px', 'nx', 'py', 'ny', 'pz', 'nz'], function(x : string){
 			return path + x + format;
@@ -36,7 +36,7 @@ export class TextureMapper implements MapWithKeys {
 	grass: THREE.Texture;		
 	constructor() {
 		this.none = null;
-		this.grass = THREE.ImageUtils.loadTexture('/build/img/examples/grasslight-thin.jpg');
+		this.grass = THREE.ImageUtils.loadTexture('/build/images/examples/grasslight-thin.jpg');
 	}
 }
 
@@ -172,5 +172,37 @@ export class GuiBuilder {
 		folder.add( data, 'lightMap', this.textureMaps.keys ).onChange( this.updateTexture( material, 'lightMap', this.textureMaps ) );
 		folder.add( data, 'specularMap', this.textureMaps.keys).onChange( this.updateTexture( material, 'specularMap', this.textureMaps ) );
 		folder.add( data, 'alphaMap', this.textureMaps.keys).onChange( this.updateTexture( material, 'alphaMap', this.textureMaps ) );
+	}
+	
+	addLightGui(gui : dat.GUI, light : THREE.Light){
+		var lightFld = gui.addFolder(light.name || light.type);
+		lightFld.addColor(light, 'color');
+		if(_.has(light, 'angle'))
+			lightFld.add(light, 'angle').step(Math.PI / 12);
+		if(_.has(light, 'distance'))
+			lightFld.add(light, 'distance');
+		if(_.has(light, 'intensity'))				
+			lightFld.add(light, 'intensity');			
+	}
+	
+	/**
+	 * Add dat-gui properties for the properties of an Object3D instance
+	 * @param folderName The name of the folder to categorize each set of properties
+	 * @param openRot Whether to open the {name} Rotation folder by default
+	 * @param openPos Whether to open the {name} Position folder by default 
+	 */
+	addObj3dProps(gui : dat.GUI, obj3d : THREE.Object3D, folderName : string, openRot : boolean = false, openPos: boolean = false){
+		var rotFld = gui.addFolder(folderName + ' Rotation');
+		rotFld.add(obj3d.rotation, 'x').step(0.05).listen();
+		rotFld.add(obj3d.rotation, 'y').step(0.05).listen();
+		rotFld.add(obj3d.rotation, 'z').step(0.05).listen();
+		var posFld = gui.addFolder(folderName + ' Position');
+		posFld.add(obj3d.position, 'x').step(0.5).listen();
+		posFld.add(obj3d.position, 'y').step(0.5).listen();
+		posFld.add(obj3d.position, 'z').step(0.5).listen();
+		if(openRot)
+			rotFld.open();
+		if(openPos)
+			posFld.open();
 	}
 }

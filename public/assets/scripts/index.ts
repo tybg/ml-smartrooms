@@ -16,88 +16,94 @@ module ThreePsTutorial{
 		scene : THREE.Scene = new THREE.Scene();
 		renderer : THREE.Renderer = new THREE.WebGLRenderer();
 		//Lights
-		light : THREE.AmbientLight = new THREE.AmbientLight(0xffffff);
-		otherLight = new THREE.SpotLight(0xffffff, 1, 100, 2);
+		light = new THREE.SpotLight(0xffffff, 1, 100, 2);
+		dirLight = new THREE.DirectionalLight(0xffffff, 1);
 		//Cameras
 		camera : THREE.PerspectiveCamera;
 		//Objects		
-		box : THREE.Mesh;
+		mesh : THREE.Mesh;
 		
 		constructor(){
 			this.renderer.setSize(window.innerWidth, window.innerHeight);
-			document.getElementById('webgl-container').appendChild(this.renderer.domElement);
+			var renderContainer = document.getElementById('webgl-container')
+			renderContainer.appendChild(this.renderer.domElement);
 			
 			//Add Lighting
 			//this.scene.add(this.light);
-			this.otherLight.position.setZ(25);
-			this.scene.add(this.otherLight);
+			this.light.position.setZ(25);
+			this.scene.add(this.light);
+			this.dirLight.position.set(0, 25, 0);
+			this.dirLight.rotation.x = Math.PI / 2;
+			this.scene.add(this.dirLight);
 			
 			//Configure Camera
-			this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
-			this.camera.position.z = 100;
+			this.camera = new THREE.PerspectiveCamera(75, renderContainer.clientWidth / renderContainer.clientHeight, 0.1, 1000);
+			this.camera.position.z = 40;
 			this.scene.add(this.camera);
 			
 			//Instantiate Objects			
-			this.box = new THREE.Mesh(new THREE.BoxGeometry(20, 20, 20), new THREE.MeshPhongMaterial({ ambientColor: 0x0000ff, specular: 15 }));			
-			this.box.name = 'Box';
-			this.scene.add(this.box);
+			this.mesh = new THREE.Mesh(new THREE.TorusKnotGeometry(10, 3, 100, 16), new THREE.MeshPhongMaterial({ color: 0x2194CE, specular: 0x000000 }));
+			this.mesh.name = 'Box';
+			this.scene.add(this.mesh);
 			
 			//Add GUI
 			this.addGui();
-			this.addLightGui(this.otherLight);
 			this.renderScene();
 		}
 		
-		/**
-		 * Add dat-gui properties for the properties of an Object3D instance
-		 * @param folderName The name of the folder to categorize each set of properties
-		 * @param openRot Whether to open the {name} Rotation folder by default
-		 * @param openPos Whether to open the {name} Position folder by default 
-		 */
-		private addObj3dProps(obj3d : THREE.Object3D, folderName : string, openRot : boolean = true, openPos: boolean = true){
-			var rotFld = this.gui.addFolder(folderName + ' Rotation');
-			rotFld.add(obj3d.rotation, 'x').step(0.05);
-			rotFld.add(obj3d.rotation, 'y').step(0.05);
-			rotFld.add(obj3d.rotation, 'z').step(0.05);
-			var posFld = this.gui.addFolder(folderName + ' Position');
-			posFld.add(obj3d.position, 'x').step(0.5);
-			posFld.add(obj3d.position, 'y').step(0.5);
-			posFld.add(obj3d.position, 'z').step(0.5);
-			if(openRot)
-				rotFld.open();
-			if(openPos)
-				posFld.open();
+		private addResizeListener = function(){
+			window.addEventListener('resize', function () {				
+				this.camera.aspect = window.innerWidth / window.innerHeight;
+				this.camera.updateProjectionMatrix();
+				this.renderer.setSize(window.innerWidth, window.innerHeight);				
+			}, false );
 		}
 		
-		private addLightGui(light : THREE.Light){
-			var lightFld = this.gui.addFolder(light.name || light.type);
-			lightFld.addColor(light, 'color');
-			if(_.has(light, 'angle'))
-				lightFld.add(light, 'angle').step(Math.PI / 12);
-			if(_.has(light, 'distance'))
-				lightFld.add(light, 'distance');
-			if(_.has(light, 'intensity'))				
-				lightFld.add(light, 'intensity');			
-		}	
-		
 		private addGui(){
-			//this.gui.remember(this.scene);
-			this.addObj3dProps(this.camera, 'Camera', false, false);
-			this.addObj3dProps(this.box, 'Box', false, false);
-			this.addObj3dProps(this.otherLight, this.otherLight.type);
 			var threeGuiBuilder = new ThreeGui.GuiBuilder();
-			threeGuiBuilder.addPhongMaterialGui(this.gui, this.box, <THREE.MeshPhongMaterial>this.box.material, this.box.geometry)
+			threeGuiBuilder.addPhongMaterialGui(this.gui, this.mesh, <THREE.MeshPhongMaterial>this.mesh.material, this.mesh.geometry)			
+			threeGuiBuilder.addLightGui(this.gui, this.light);
+			threeGuiBuilder.addObj3dProps(this.gui, this.camera, 'Camera', false, false);
+			//threeGuiBuilder.addObj3dProps(this.gui, this.mesh, 'Box', false, false);
+			threeGuiBuilder.addObj3dProps(this.gui, this.light, this.light.type);
 		}
 		/**
 		 * Render the box
 		 */
 		renderScene = () => {
-			this.renderer.render(this.scene, this.camera);
-			requestAnimationFrame(this.renderScene);
-		}
+			requestAnimationFrame(this.renderScene);			
+			this.mesh.rotation.x += 0.005;
+			this.mesh.rotation.y += 0.005;
+			this.renderer.render(this.scene, this.camera);			
+		};
 	}	
 }
 
 domready(function() {
 	boxExample = new ThreePsTutorial.BoxExample();
+	
+	window.addEventListener('resize', function () {				
+		boxExample.camera.aspect = window.innerWidth / window.innerHeight;
+		boxExample.camera.updateProjectionMatrix();
+		boxExample.renderer.setSize(window.innerWidth, window.innerHeight);				
+	}, false );
+	
+	window.addEventListener('mousemove', function(ev : MouseEvent) {
+		if(ev.buttons === 1){
+			if(ev.ctrlKey && !ev.altKey){
+				boxExample.camera.rotation.x -= ev.movementY / 100;
+				boxExample.camera.rotation.y -= ev.movementX / 100;
+			}
+			else if(ev.ctrlKey && ev.altKey){
+				//console.log('ev.movement ' + ev.movementX + ', ' + ev.movementY);
+				boxExample.camera.position.x += ev.movementX / 10;
+				boxExample.camera.position.y -= ev.movementY / 10;
+			}
+			else if(ev.altKey && !ev.ctrlKey)
+			{
+				boxExample.light.position.x += ev.movementX / 10;
+				boxExample.light.position.y -= ev.movementY / 10;
+			}
+		}
+	});
 });

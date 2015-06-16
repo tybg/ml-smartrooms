@@ -6,22 +6,33 @@
 /// <reference path="typings/gulp-typescript/gulp-typescript.d.ts" />
 /// <reference path="typings/browserify/browserify.d.ts" />
 
-var assets = __dirname + '/public/assets/';
-
+var assets = __dirname + '/public/assets';
+var distDir = __dirname + '/public/build';
 var paths = {
 	src: {
-		sprites: assets + 'sprites/**/*.*',
-        images: assets + 'img/**/*.*',
-		less: assets + 'css/less/*.less',
+		sprites: assets + '/sprites/**/*.*',
+        images: assets + '/img/**/*.*',
+		less: assets + '/css/less/*.less',
         scripts: {
-            basedir: assets + 'scripts',
-            ts: assets + 'scripts/*.ts',
+            basedir: assets + '/scripts',
+            //TypeScripts
+            ts: assets + '/scripts/*.ts',
+            //Uglify and concat these lib scripts into lib[.min].js
             lib: assets + '/scripts/lib/**/*.js',
+            //Require.js and associated plugins/modules - to be copied to build/js!
+            requires: assets + '/scripts/require/**/*.js',
             main: 'index.ts'
         }
 	},
     cliententrypoint: 'app.js',
-	dist: 'public/build'
+	dist: {
+        basedir: distDir,
+        scripts: distDir + '/scripts',
+        styles: distDir + '/styles',
+        images: distDir + '/images',
+        sprites: distDir + '/sprites',        
+        files: distDir + '/**/*.*'
+    }
 },
     browserify = require('browserify'),
     tsify = require('tsify'),
@@ -35,11 +46,13 @@ var paths = {
 	changed = require('gulp-changed'),
 	concat = require('gulp-concat'),
     gulpif = require('gulp-if'),
+    ignore = require('gulp-ignore'),
 	imagemin = require('gulp-imagemin'),
 	less = require('gulp-less'),
 	minify = require('gulp-minify-css'),
     nodemon = require('gulp-nodemon'),
     plumber = require('gulp-plumber'),
+    rimraf = require('gulp-rimraf'),
 	rename = require('gulp-rename'),
     sourcemaps = require('gulp-sourcemaps'),
 	uglify = require('gulp-uglify'),
@@ -56,75 +69,56 @@ gulp.plumbedSrc = function(){
     .pipe(plumber(gutil.log));
 };
 
-/*var browserifyOpts = {
-  basedir: paths.src.scripts.basedir,
-  debug: true
-};
-var opts = _.assign({}, watchify.args, browserifyOpts);
-var bf = browserify({basedir: paths.src.scripts.basedir});
-var wf = watchify(bf)
-//Require from bower_components and expose as the package name used by BOTH TypeScript and Browserify
-    .require(__dirname + '/bower_components/threejs/build/three.js', { expose: 'three' })
-    .add(paths.src.scripts.basedir + '/' + paths.src.scripts.main)
-    .plugin(tsify);
-    //.transform(debowerify);
-    
-function bundle(){
-    return wf.bundle()
-        .on('error', gutil.log.bind(gutil, 'Browserify Error'))
-        .pipe(source(paths.cliententrypoint))
-        .pipe(gulp.dest(paths.dist + '/js'));
-}
-
-gulp.task('js', bundle);
-wf.on('update', bundle);
-wf.on('log', gutil.log);*/
-
+gulp.task('clean', function() {
+  return gulp.src(paths.dist.files, { read: false })
+    .pipe(rimraf());
+});
 
 gulp.task('ts', function() {
     var tsResult = gulp.plumbedSrc(paths.src.scripts.ts)
                     .pipe(ts({ typescript: require('typescript'), target: 'ES5', module: 'amd' }));
-    tsResult.js.pipe(gulp.dest(paths.dist + '/js'))
+    tsResult.js.pipe(gulp.dest(paths.dist.scripts));
+        /* Replacing with RequireJS *
         .pipe(concat('app.js'))
-        .pipe(gulp.dest(paths.dist + '/js'))
+        .pipe(gulp.dest(paths.dist.scripts))
         .pipe(uglify())
         .pipe(rename('app.min.js'))
-        .pipe(gulp.dest(paths.dist + '/js'));
+        .pipe(gulp.dest(paths.dist.scripts));*/
     /*return merge([ // Merge the two output streams, so this task is finished when the IO of both operations are done. 
-        tsResult.dts.pipe(gulp.dest(paths.dist + '/js/typings')),
-        tsResult.js.pipe(gulp.dest(paths.dist + '/js'))
+        tsResult.dts.pipe(gulp.dest(paths.dist.basedir + '/js/typings')),
+        tsResult.js.pipe(gulp.dest(paths.dist.scripts))
     ]);*/
 });
 
 //Copy files from assets to dist as needed
 gulp.task('copy', function(){
-    gulp.plumbedSrc(paths.src.scripts.basedir + '/domready.js')
-        .pipe(gulp.dest(paths.dist + '/js'));
+    return gulp.plumbedSrc(paths.src.scripts.requires)
+        .pipe(gulp.dest(paths.dist.scripts));
 })
 //Compile lib files which don't cooperate with CommonJS or Browserify, so should be compiled into a separate lib JS
 gulp.task('jslib', function(){
 	return pipe(
 		gulp.plumbedSrc(paths.src.scripts.lib),
 		concat('lib.js'),
-		gulp.dest(paths.dist + '/js'),
+		gulp.dest(paths.dist.scripts),
 		uglify(),
 		rename('lib.min.js'),
-		gulp.dest(paths.dist + '/js')
+		gulp.dest(paths.dist.scripts)
 	);
 });
 
 gulp.task('less', function() {
     return pipe(
-        gulp.plumbedSrc([paths.src.less, paths.dist + '/css/sprite.css']),
+        gulp.plumbedSrc([paths.src.less, paths.dist.styles + '/sprite.css']),
         sourcemaps.init(),
         less(),
         sourcemaps.write(),
         prefixer('last 2 versions', 'ie 8'),
         concat('main.css'),
-        gulp.dest(paths.dist + '/css'),
+        gulp.dest(paths.dist.styles),
         minify(),
         rename('main.min.css'),
-        gulp.dest(paths.dist + '/css')
+        gulp.dest(paths.dist.styles)
         //,livereload(server)
     );
 });
@@ -132,13 +126,13 @@ gulp.task('less', function() {
 gulp.task('images', function() {
     return pipe(
         gulp.plumbedSrc(paths.src.images),
-        changed(paths.dist + '/img'),
+        changed(paths.dist.images),
         imagemin({
             optimizationLevel: 3,
             progressive: true,
             interlaced: true
         }),
-        gulp.dest(paths.dist + '/img')
+        gulp.dest(paths.dist.images)
     );
 });
 
@@ -148,8 +142,8 @@ gulp.task('sprite', function() {
         cssName: 'sprite.css'
     }));
     return merge([
-        spriteData.img.pipe(gulp.dest(paths.dist + "/css")),
-        spriteData.css.pipe(gulp.dest(paths.dist + "/css"))
+        spriteData.img.pipe(gulp.dest(paths.dist.styles)),
+        spriteData.css.pipe(gulp.dest(paths.dist.styles))
     ]);    
 });
 
@@ -187,7 +181,22 @@ gulp.task('serve', function () {
   });
 });
 
-gulp.task('default', ['ts', 'watch', 'serve']);
-gulp.task('stage', ['ts', 'watch', 'pm2']);
-gulp.task('buildapp', ['sprite', 'less', 'images', 'ts']);
-gulp.task('build', ['copy', 'jslib', 'buildapp']);
+//Compile TypeScripts and set up a basic development server using nodemon
+gulp.task('default', function(cb){
+    runSequence(['ts', 'watch', 'serve'], cb);
+});
+
+//Compile TypeScripts and set up PM2 to stage the app (not needed during development)
+gulp.task('stage', function(cb){
+    runSequence(['ts', 'watch', 'pm2']);
+});
+
+//Build the app only (no lib compilation or require file copying)
+gulp.task('buildapp', function(cb){
+   runSequence(['sprite', 'less', 'images', 'ts'], cb);
+});
+
+//Build ERRYTING
+gulp.task('build', function(cb){
+    runSequence('clean', ['copy', 'jslib'], 'buildapp', cb);
+});
