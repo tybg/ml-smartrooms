@@ -1,7 +1,10 @@
 /// <reference path="../../../typings/threejs/three.d.ts" />
-/// <reference path="../../../typings/dat-gui/dat-gui.d.ts" />
+/// <reference path="../../../typings/lodash/lodash.d.ts" />
+/// <reference path="../../../typings/dat/dat.d.ts" />
 "use strict";
 import _ = require('lodash');
+import THREE = require('three');
+//dat is external, included in /public/build/js/lib.js
 var boxExample : ThreePsTutorial.BoxExample;
 
 module ThreePsTutorial{
@@ -19,7 +22,6 @@ module ThreePsTutorial{
 			document.getElementById('webgl-container').appendChild(this.renderer.domElement);
 			//this.scene.add(this.light);
 			this.otherLight.position.setZ(25);
-			this.otherLight.name = 'SpotLight';
 			this.scene.add(this.otherLight);
 			this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
 			this.camera.position.z = 100;
@@ -68,8 +70,8 @@ module ThreePsTutorial{
 		private addGui(){
 			//this.gui.remember(this.scene);
 			this.addObj3dProps(this.camera, 'Camera', false, false);
-			this.addObj3dProps(this.otherLight, 'Directional Light', false, false);
-			this.addObj3dProps(this.box, 'Box');
+			this.addObj3dProps(this.box, 'Box', false, false);
+			this.addObj3dProps(this.otherLight, this.otherLight.type);
 		}
 		/**
 		 * Render the box

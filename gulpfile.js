@@ -6,20 +6,27 @@
 /// <reference path="typings/gulp-typescript/gulp-typescript.d.ts" />
 /// <reference path="typings/browserify/browserify.d.ts" />
 
+var assets = __dirname + '/public/assets/';
+
 var paths = {
 	src: {
-		sprites: 'public/assets/img/sprites/*.png',
-        images: 'public/assets/img/*.png',
-		less: 'public/assets/css/less/*.less',
+		sprites: assets + 'img/sprites/*.png',
+        images: assets + 'img/*.png',
+		less: assets + 'css/less/*.less',
         scripts: {
-            lib: 'public/assets/js/lib/*.js'
-        },
-        typescripts: 'public/assets/ts/*.ts'
+            basedir: assets + 'scripts',
+            lib: assets + '/scripts/lib/**/*.js',
+            main: 'index.ts'
+        }
 	},
-	dist: __dirname + '/public/build'
+    cliententrypoint: 'app.js',
+	dist: 'public/build'
 },
     browserify = require('browserify'),
+    tsify = require('tsify'),
     watchify = require('watchify'),
+    //debowerify = require('debowerify'),
+    _ = require('lodash'),
 	gulp = require('gulp'),
     source = require('vinyl-source-stream'),
     buffer = require('vinyl-buffer'),
@@ -38,7 +45,7 @@ var paths = {
     gutil = require('gulp-util'),
 	pipe = require('multipipe'),
 	spritesmith = require('gulp.spritesmith'),
-    ts = require('gulp-typescript'),
+    //ts = require('gulp-typescript'),
     merge = require('merge2'),
     pm2 = require('pm2'),
 	runSequence = require('run-sequence');
@@ -48,9 +55,41 @@ gulp.plumbedSrc = function(){
     .pipe(plumber(gutil.log));
 };
 
-var wf = watchify(browserify({
+var browserifyOpts = {
+  basedir: paths.src.scripts.basedir,
+  debug: true
+};
+var opts = _.assign({}, watchify.args, browserifyOpts);
+var bf = browserify({basedir: paths.src.scripts.basedir});
+var wf = watchify(bf)
+//Require from bower_components and expose as the package name used by BOTH TypeScript and Browserify
+    .require(__dirname + '/bower_components/threejs/build/three.js', { expose: 'three' })
+    .add(paths.src.scripts.basedir + '/' + paths.src.scripts.main)
+    .plugin(tsify);
+    //.transform(debowerify);
     
-}));
+function bundle(){
+    return wf.bundle()
+        .on('error', gutil.log.bind(gutil, 'Browserify Error'))
+        .pipe(source(paths.cliententrypoint))
+        .pipe(gulp.dest(paths.dist + '/js'));
+}
+
+gulp.task('js', bundle);
+wf.on('update', bundle);
+wf.on('log', gutil.log);
+
+//Compile lib files which don't cooperate with CommonJS or Browserify, so should be compiled into a separate lib JS
+gulp.task('jslib', function(){
+	return pipe(
+		gulp.plumbedSrc(paths.src.scripts.lib),
+		concat('lib.js'),
+		gulp.dest(paths.dist + '/js'),
+		uglify(),
+		rename('lib.min.js'),
+		gulp.dest(paths.dist + '/js')
+	);
+});
 
 gulp.task('less', function() {
     return pipe(
@@ -66,33 +105,6 @@ gulp.task('less', function() {
         gulp.dest(paths.dist + '/css')
         //,livereload(server)
     );
-});
-
-gulp.task('jslib', function(){
-	return pipe(
-		gulp.plumbedSrc(paths.src.scripts.lib),
-		concat('lib.js'),
-		gulp.dest(paths.dist + '/js'),
-		uglify(),
-		rename('lib.min.js'),
-		gulp.dest(paths.dist + '/js')
-	);
-});
-
-gulp.task('jts', function() {
-    /* non-Browserify
-    var tsResult = gulp.plumbedSrc(paths.src.typescripts)
-                    .pipe(ts({ typescript: require('typescript'), target: 'ES5', module: 'amd' }));
-    tsResult.js.pipe(gulp.dest(paths.dist + '/ts'))
-        .pipe(concat('pubts.js'))
-        .pipe(gulp.dest(paths.dist + '/ts'))
-        .pipe(uglify())
-        .pipe(rename('pubts.min.js'))
-        .pipe(gulp.dest(paths.dist + '/ts'));*/
-    /*return merge([ // Merge the two output streams, so this task is finished when the IO of both operations are done. 
-        tsResult.dts.pipe(gulp.dest(paths.dist + '/js/typings')),
-        tsResult.js.pipe(gulp.dest(paths.dist + '/js'))
-    ]);*/
 });
 
 gulp.task('images', function() {
@@ -119,12 +131,7 @@ gulp.task('sprite', function() {
     ]);    
 });
 
-gulp.task('watchlib', function(){
-    gulp.watch(paths.src.scripts.lib, ['jslib']);    
-});
-
 gulp.task('watch', function() {
-    gulp.watch(paths.src.typescripts, ['jts']);
     gulp.watch(paths.src.images, ['images']);
     gulp.watch(paths.src.less, function() {
         runSequence('sprite', 'less');
@@ -156,9 +163,6 @@ gulp.task('serve', function () {
   });
 });
 
-//'livereload'
-gulp.task('default', ['watch', 'serve']);
-gulp.task('watchall', ['watch', 'watchlib', 'serve']);
-gulp.task('stage', ['watch', 'pm2']);
-gulp.task('build', runSequence('sprite', 'less', ['images', 'jslib'], 'jts'));
-//'fonts'
+gulp.task('default', ['jslib', 'js', 'watch', 'serve']);
+gulp.task('stage', ['js', 'watch', 'pm2']);
+gulp.task('build', ['sprite', 'less', 'images', 'jslib', 'js']);

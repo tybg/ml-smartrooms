@@ -55,3 +55,7 @@ declare module dat {
         onFinishChange: (value?: any) => void;
     }
 }
+
+declare module 'dat' {
+    export=dat;
+}

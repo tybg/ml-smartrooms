@@ -1,0 +1,23 @@
+{
+  "name": "smartrooms",
+  "version": "0.0.0",
+  "homepage": "https://github.com/tybg/ml-smartrooms",
+  "authors": [
+    "hsrobmln <robert.parker@mullen.com>"
+  ],
+  "main": "public/build/app.js",
+  "moduleType": [
+    "node"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.1.4"
+  }
+}
