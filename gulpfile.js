@@ -10,11 +10,12 @@ var assets = __dirname + '/public/assets/';
 
 var paths = {
 	src: {
-		sprites: assets + 'img/sprites/*.png',
-        images: assets + 'img/*.png',
+		sprites: assets + 'sprites/**/*.*',
+        images: assets + 'img/**/*.*',
 		less: assets + 'css/less/*.less',
         scripts: {
             basedir: assets + 'scripts',
+            ts: assets + 'scripts/*.ts',
             lib: assets + '/scripts/lib/**/*.js',
             main: 'index.ts'
         }
@@ -45,7 +46,7 @@ var paths = {
     gutil = require('gulp-util'),
 	pipe = require('multipipe'),
 	spritesmith = require('gulp.spritesmith'),
-    //ts = require('gulp-typescript'),
+    ts = require('gulp-typescript'),
     merge = require('merge2'),
     pm2 = require('pm2'),
 	runSequence = require('run-sequence');
@@ -55,7 +56,7 @@ gulp.plumbedSrc = function(){
     .pipe(plumber(gutil.log));
 };
 
-var browserifyOpts = {
+/*var browserifyOpts = {
   basedir: paths.src.scripts.basedir,
   debug: true
 };
@@ -77,8 +78,29 @@ function bundle(){
 
 gulp.task('js', bundle);
 wf.on('update', bundle);
-wf.on('log', gutil.log);
+wf.on('log', gutil.log);*/
 
+
+gulp.task('ts', function() {
+    var tsResult = gulp.plumbedSrc(paths.src.scripts.ts)
+                    .pipe(ts({ typescript: require('typescript'), target: 'ES5', module: 'amd' }));
+    tsResult.js.pipe(gulp.dest(paths.dist + '/js'))
+        .pipe(concat('app.js'))
+        .pipe(gulp.dest(paths.dist + '/js'))
+        .pipe(uglify())
+        .pipe(rename('app.min.js'))
+        .pipe(gulp.dest(paths.dist + '/js'));
+    /*return merge([ // Merge the two output streams, so this task is finished when the IO of both operations are done. 
+        tsResult.dts.pipe(gulp.dest(paths.dist + '/js/typings')),
+        tsResult.js.pipe(gulp.dest(paths.dist + '/js'))
+    ]);*/
+});
+
+//Copy files from assets to dist as needed
+gulp.task('copy', function(){
+    gulp.plumbedSrc(paths.src.scripts.basedir + '/domready.js')
+        .pipe(gulp.dest(paths.dist + '/js'));
+})
 //Compile lib files which don't cooperate with CommonJS or Browserify, so should be compiled into a separate lib JS
 gulp.task('jslib', function(){
 	return pipe(
@@ -132,7 +154,9 @@ gulp.task('sprite', function() {
 });
 
 gulp.task('watch', function() {
+    gulp.watch(paths.src.scripts.ts, ['ts']);    
     gulp.watch(paths.src.images, ['images']);
+    gulp.watch(paths.src.scripts.lib, ['jslib']);
     gulp.watch(paths.src.less, function() {
         runSequence('sprite', 'less');
     });
@@ -163,6 +187,7 @@ gulp.task('serve', function () {
   });
 });
 
-gulp.task('default', ['jslib', 'js', 'watch', 'serve']);
-gulp.task('stage', ['js', 'watch', 'pm2']);
-gulp.task('build', ['sprite', 'less', 'images', 'jslib', 'js']);
+gulp.task('default', ['ts', 'watch', 'serve']);
+gulp.task('stage', ['ts', 'watch', 'pm2']);
+gulp.task('buildapp', ['sprite', 'less', 'images', 'ts']);
+gulp.task('build', ['copy', 'jslib', 'buildapp']);

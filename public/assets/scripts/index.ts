@@ -1,35 +1,48 @@
 /// <reference path="../../../typings/threejs/three.d.ts" />
 /// <reference path="../../../typings/lodash/lodash.d.ts" />
 /// <reference path="../../../typings/dat/dat.d.ts" />
+/// <reference path="../../../typings/domready/domready.d.ts" />
+
 "use strict";
-import _ = require('lodash');
-import THREE = require('three');
-//dat is external, included in /public/build/js/lib.js
+import ThreeGui = require('threegui');
+import domready = require('domready');
 var boxExample : ThreePsTutorial.BoxExample;
 
 module ThreePsTutorial{
 	export class BoxExample{
 		gui : dat.GUI = new dat.GUI();
-		public guiConfigProps
-		public scene : THREE.Scene = new THREE.Scene();
-		public renderer : THREE.Renderer = new THREE.WebGLRenderer();
-		public light : THREE.AmbientLight = new THREE.AmbientLight(0xffffff);
-		public otherLight = new THREE.SpotLight(0xffffff, 1, 100, 2);
-		public camera : THREE.PerspectiveCamera;
-		public box : THREE.Mesh;
+		guiConfigProps
+		//Scene/Renderer
+		scene : THREE.Scene = new THREE.Scene();
+		renderer : THREE.Renderer = new THREE.WebGLRenderer();
+		//Lights
+		light : THREE.AmbientLight = new THREE.AmbientLight(0xffffff);
+		otherLight = new THREE.SpotLight(0xffffff, 1, 100, 2);
+		//Cameras
+		camera : THREE.PerspectiveCamera;
+		//Objects		
+		box : THREE.Mesh;
+		
 		constructor(){
 			this.renderer.setSize(window.innerWidth, window.innerHeight);
 			document.getElementById('webgl-container').appendChild(this.renderer.domElement);
+			
+			//Add Lighting
 			//this.scene.add(this.light);
 			this.otherLight.position.setZ(25);
 			this.scene.add(this.otherLight);
+			
+			//Configure Camera
 			this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
 			this.camera.position.z = 100;
 			this.scene.add(this.camera);
 			
-			this.box = new THREE.Mesh(new THREE.BoxGeometry(20, 20, 20), new THREE.MeshPhongMaterial({ ambientColor: 0x0000ff, specular: 15 }));
-			this.box.name = 'box';
+			//Instantiate Objects			
+			this.box = new THREE.Mesh(new THREE.BoxGeometry(20, 20, 20), new THREE.MeshPhongMaterial({ ambientColor: 0x0000ff, specular: 15 }));			
+			this.box.name = 'Box';
 			this.scene.add(this.box);
+			
+			//Add GUI
 			this.addGui();
 			this.addLightGui(this.otherLight);
 			this.renderScene();
@@ -65,13 +78,15 @@ module ThreePsTutorial{
 				lightFld.add(light, 'distance');
 			if(_.has(light, 'intensity'))				
 				lightFld.add(light, 'intensity');			
-		}
+		}	
 		
 		private addGui(){
 			//this.gui.remember(this.scene);
 			this.addObj3dProps(this.camera, 'Camera', false, false);
 			this.addObj3dProps(this.box, 'Box', false, false);
 			this.addObj3dProps(this.otherLight, this.otherLight.type);
+			var threeGuiBuilder = new ThreeGui.GuiBuilder();
+			threeGuiBuilder.addPhongMaterialGui(this.gui, this.box, <THREE.MeshPhongMaterial>this.box.material, this.box.geometry)
 		}
 		/**
 		 * Render the box
@@ -83,6 +98,6 @@ module ThreePsTutorial{
 	}	
 }
 
-window.onload = function() {
+domready(function() {
 	boxExample = new ThreePsTutorial.BoxExample();
-}
+});
