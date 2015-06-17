@@ -17,6 +17,7 @@ module ThreePsTutorial{
 		//Scene/Renderer
 		scene : THREE.Scene = new THREE.Scene();
 		renderer : THREE.Renderer = new THREE.WebGLRenderer();
+		renderContainer : HTMLElement;
 		//Lights
 		light = new THREE.SpotLight(0xffffff, 1, 100, 2);
 		dirLight = new THREE.DirectionalLight(0xffffff, 1);
@@ -26,9 +27,9 @@ module ThreePsTutorial{
 		mesh : THREE.Mesh;
 		
 		constructor(){
-			var renderContainer = document.getElementById('map-container')			
-			this.renderer.setSize(renderContainer.clientWidth, renderContainer.clientHeight);
-			renderContainer.appendChild(this.renderer.domElement);
+			this.renderContainer = document.getElementById('map-container')			
+			this.renderer.setSize(this.renderContainer.clientWidth, this.renderContainer.clientHeight);
+			this.renderContainer.appendChild(this.renderer.domElement);
 			
 			//Add Lighting
 			//this.scene.add(this.light);
@@ -39,7 +40,7 @@ module ThreePsTutorial{
 			this.scene.add(this.dirLight);
 			
 			//Configure Camera
-			this.camera = new THREE.PerspectiveCamera(75, renderContainer.clientWidth / renderContainer.clientHeight, 0.1, 1000);
+			this.camera = new THREE.PerspectiveCamera(75, this.renderContainer.clientWidth / this.renderContainer.clientHeight, 0.1, 1000);
 			this.camera.position.z = 40;
 			this.scene.add(this.camera);
 			
@@ -59,14 +60,6 @@ module ThreePsTutorial{
 				this.addGui();
 				this.renderScene();
 			})
-		}
-		
-		private addResizeListener = function(){
-			window.addEventListener('resize', function () {				
-				this.camera.aspect = window.innerWidth / window.innerHeight;
-				this.camera.updateProjectionMatrix();
-				this.renderer.setSize(window.innerWidth, window.innerHeight);				
-			}, false );
 		}
 		
 		private addGui(){
@@ -93,9 +86,9 @@ domready(function() {
 	boxExample = new ThreePsTutorial.BoxExample();
 	
 	window.addEventListener('resize', function () {				
-		boxExample.camera.aspect = window.innerWidth / window.innerHeight;
+		boxExample.camera.aspect = boxExample.renderContainer.clientWidth / boxExample.renderContainer.clientHeight;
 		boxExample.camera.updateProjectionMatrix();
-		boxExample.renderer.setSize(window.innerWidth, window.innerHeight);				
+		boxExample.renderer.setSize(boxExample.renderContainer.clientWidth, boxExample.renderContainer.clientHeight);				
 	}, false );
 	
 	window.addEventListener('mousemove', function(ev : MouseEvent) {
