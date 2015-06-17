@@ -113,14 +113,14 @@ gulp.task('csslib', function(){
 gulp.task('less', function() {
     return pipe(
         gulp.plumbedSrc([paths.src.less, paths.dist.styles + '/sprite.css']),
-        sourcemaps.init(),
         less(),
-        sourcemaps.write(),
-        prefixer('last 2 versions', 'ie 8'),
-        concat('main.css'),
+        sourcemaps.init(),        
+        prefixer(),        
+        concat('main.css'),        
         gulp.dest(paths.dist.styles),
         minify(),
         rename('main.min.css'),
+        sourcemaps.write('.'),
         gulp.dest(paths.dist.styles)
         //,livereload(server)
     );

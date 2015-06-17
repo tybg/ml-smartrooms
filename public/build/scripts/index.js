@@ -19,13 +19,6 @@ define(["require", "exports", 'threegui', 'domready'], function (require, export
                 //Lights
                 this.light = new THREE.SpotLight(0xffffff, 1, 100, 2);
                 this.dirLight = new THREE.DirectionalLight(0xffffff, 1);
-                this.addResizeListener = function () {
-                    window.addEventListener('resize', function () {
-                        this.camera.aspect = window.innerWidth / window.innerHeight;
-                        this.camera.updateProjectionMatrix();
-                        this.renderer.setSize(window.innerWidth, window.innerHeight);
-                    }, false);
-                };
                 /**
                  * Render the box
                  */
@@ -35,9 +28,9 @@ define(["require", "exports", 'threegui', 'domready'], function (require, export
                     //this.mesh.rotation.y += 0.005;
                     _this.renderer.render(_this.scene, _this.camera);
                 };
-                var renderContainer = document.getElementById('map-container');
-                this.renderer.setSize(renderContainer.clientWidth, renderContainer.clientHeight);
-                renderContainer.appendChild(this.renderer.domElement);
+                this.renderContainer = document.getElementById('map-container');
+                this.renderer.setSize(this.renderContainer.clientWidth, this.renderContainer.clientHeight);
+                this.renderContainer.appendChild(this.renderer.domElement);
                 //Add Lighting
                 //this.scene.add(this.light);
                 this.light.position.setZ(25);
@@ -46,7 +39,7 @@ define(["require", "exports", 'threegui', 'domready'], function (require, export
                 this.dirLight.rotation.x = Math.PI / 2;
                 this.scene.add(this.dirLight);
                 //Configure Camera
-                this.camera = new THREE.PerspectiveCamera(75, renderContainer.clientWidth / renderContainer.clientHeight, 0.1, 1000);
+                this.camera = new THREE.PerspectiveCamera(75, this.renderContainer.clientWidth / this.renderContainer.clientHeight, 0.1, 1000);
                 this.camera.position.z = 40;
                 this.scene.add(this.camera);
                 //Instantiate Objects			
@@ -80,9 +73,9 @@ define(["require", "exports", 'threegui', 'domready'], function (require, export
     domready(function () {
         boxExample = new ThreePsTutorial.BoxExample();
         window.addEventListener('resize', function () {
-            boxExample.camera.aspect = window.innerWidth / window.innerHeight;
+            boxExample.camera.aspect = boxExample.renderContainer.clientWidth / boxExample.renderContainer.clientHeight;
             boxExample.camera.updateProjectionMatrix();
-            boxExample.renderer.setSize(window.innerWidth, window.innerHeight);
+            boxExample.renderer.setSize(boxExample.renderContainer.clientWidth, boxExample.renderContainer.clientHeight);
         }, false);
         window.addEventListener('mousemove', function (ev) {
             if (ev.buttons === 1) {
