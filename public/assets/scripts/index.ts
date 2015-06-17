@@ -1,6 +1,8 @@
 /// <reference path="../../../typings/threejs/three.d.ts" />
 /// <reference path="../../../typings/lodash/lodash.d.ts" />
 /// <reference path="../../../typings/dat/dat.d.ts" />
+/// <reference path="../../../typings/jquery/jquery.d.ts" />
+/// <reference path="../../../typings/ripples/ripples.d.ts" />
 /// <reference path="../../../typings/domready/domready.d.ts" />
 
 "use strict";
@@ -24,8 +26,8 @@ module ThreePsTutorial{
 		mesh : THREE.Mesh;
 		
 		constructor(){
-			this.renderer.setSize(window.innerWidth, window.innerHeight);
-			var renderContainer = document.getElementById('webgl-container')
+			var renderContainer = document.getElementById('map-container')			
+			this.renderer.setSize(renderContainer.clientWidth, renderContainer.clientHeight);
 			renderContainer.appendChild(this.renderer.domElement);
 			
 			//Add Lighting
@@ -42,13 +44,21 @@ module ThreePsTutorial{
 			this.scene.add(this.camera);
 			
 			//Instantiate Objects			
-			this.mesh = new THREE.Mesh(new THREE.TorusKnotGeometry(10, 3, 100, 16), new THREE.MeshPhongMaterial({ color: 0x2194CE, specular: 0x000000 }));
+			/*this.mesh = new THREE.Mesh(new THREE.TorusKnotGeometry(10, 3, 100, 16), new THREE.MeshPhongMaterial({ color: 0x2194CE, specular: 0x000000 }));
 			this.mesh.name = 'Box';
-			this.scene.add(this.mesh);
+			this.scene.add(this.mesh);*/
 			
-			//Add GUI
-			this.addGui();
-			this.renderScene();
+			var loader = new THREE.JSONLoader();
+			loader.load('/models/floorplan.json', (geometry, materials) => {
+				var material = new THREE.MeshPhongMaterial({ color: 0x2194CE, specular: 0x000000 });
+				this.mesh = new THREE.Mesh(geometry, material);
+				this.mesh.rotation.x = Math.PI / 6;
+				this.mesh.rotation.y = Math.PI / 6;
+				this.scene.add(this.mesh);
+				//Add GUI
+				this.addGui();
+				this.renderScene();
+			})
 		}
 		
 		private addResizeListener = function(){
@@ -72,8 +82,8 @@ module ThreePsTutorial{
 		 */
 		renderScene = () => {
 			requestAnimationFrame(this.renderScene);			
-			this.mesh.rotation.x += 0.005;
-			this.mesh.rotation.y += 0.005;
+			//this.mesh.rotation.x += 0.005;
+			//this.mesh.rotation.y += 0.005;
 			this.renderer.render(this.scene, this.camera);			
 		};
 	}	
@@ -91,7 +101,7 @@ domready(function() {
 	window.addEventListener('mousemove', function(ev : MouseEvent) {
 		if(ev.buttons === 1){
 			if(ev.ctrlKey && !ev.altKey){
-				boxExample.camera.rotation.x -= ev.movementY / 100;
+				boxExample.camera.rotation.z -= ev.movementY / 100;
 				boxExample.camera.rotation.y -= ev.movementX / 100;
 			}
 			else if(ev.ctrlKey && ev.altKey){
@@ -106,4 +116,8 @@ domready(function() {
 			}
 		}
 	});
+	
+	$.material.init();
+	
+	$('.dg.main').css('margin-top', boxExample.renderer.domElement.offsetTop + 'px');
 });

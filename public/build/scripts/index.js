@@ -1,6 +1,8 @@
 /// <reference path="../../../typings/threejs/three.d.ts" />
 /// <reference path="../../../typings/lodash/lodash.d.ts" />
 /// <reference path="../../../typings/dat/dat.d.ts" />
+/// <reference path="../../../typings/jquery/jquery.d.ts" />
+/// <reference path="../../../typings/ripples/ripples.d.ts" />
 /// <reference path="../../../typings/domready/domready.d.ts" />
 "use strict";
 define(["require", "exports", 'threegui', 'domready'], function (require, exports, ThreeGui, domready) {
@@ -29,12 +31,12 @@ define(["require", "exports", 'threegui', 'domready'], function (require, export
                  */
                 this.renderScene = function () {
                     requestAnimationFrame(_this.renderScene);
-                    _this.mesh.rotation.x += 0.005;
-                    _this.mesh.rotation.y += 0.005;
+                    //this.mesh.rotation.x += 0.005;
+                    //this.mesh.rotation.y += 0.005;
                     _this.renderer.render(_this.scene, _this.camera);
                 };
-                this.renderer.setSize(window.innerWidth, window.innerHeight);
-                var renderContainer = document.getElementById('webgl-container');
+                var renderContainer = document.getElementById('map-container');
+                this.renderer.setSize(renderContainer.clientWidth, renderContainer.clientHeight);
                 renderContainer.appendChild(this.renderer.domElement);
                 //Add Lighting
                 //this.scene.add(this.light);
@@ -48,12 +50,20 @@ define(["require", "exports", 'threegui', 'domready'], function (require, export
                 this.camera.position.z = 40;
                 this.scene.add(this.camera);
                 //Instantiate Objects			
-                this.mesh = new THREE.Mesh(new THREE.TorusKnotGeometry(10, 3, 100, 16), new THREE.MeshPhongMaterial({ color: 0x2194CE, specular: 0x000000 }));
+                /*this.mesh = new THREE.Mesh(new THREE.TorusKnotGeometry(10, 3, 100, 16), new THREE.MeshPhongMaterial({ color: 0x2194CE, specular: 0x000000 }));
                 this.mesh.name = 'Box';
-                this.scene.add(this.mesh);
-                //Add GUI
-                this.addGui();
-                this.renderScene();
+                this.scene.add(this.mesh);*/
+                var loader = new THREE.JSONLoader();
+                loader.load('/models/floorplan.json', function (geometry, materials) {
+                    var material = new THREE.MeshPhongMaterial({ color: 0x2194CE, specular: 0x000000 });
+                    _this.mesh = new THREE.Mesh(geometry, material);
+                    _this.mesh.rotation.x = Math.PI / 6;
+                    _this.mesh.rotation.y = Math.PI / 6;
+                    _this.scene.add(_this.mesh);
+                    //Add GUI
+                    _this.addGui();
+                    _this.renderScene();
+                });
             }
             BoxExample.prototype.addGui = function () {
                 var threeGuiBuilder = new ThreeGui.GuiBuilder();
@@ -77,7 +87,7 @@ define(["require", "exports", 'threegui', 'domready'], function (require, export
         window.addEventListener('mousemove', function (ev) {
             if (ev.buttons === 1) {
                 if (ev.ctrlKey && !ev.altKey) {
-                    boxExample.camera.rotation.x -= ev.movementY / 100;
+                    boxExample.camera.rotation.z -= ev.movementY / 100;
                     boxExample.camera.rotation.y -= ev.movementX / 100;
                 }
                 else if (ev.ctrlKey && ev.altKey) {
@@ -91,5 +101,7 @@ define(["require", "exports", 'threegui', 'domready'], function (require, export
                 }
             }
         });
+        $.material.init();
+        $('.dg.main').css('margin-top', boxExample.renderer.domElement.offsetTop + 'px');
     });
 });

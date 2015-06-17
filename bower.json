@@ -19,6 +19,7 @@
   ],
   "dependencies": {
     "jquery": "~2.1.4",
-    "lodash": "~3.9.3"
+    "lodash": "~3.9.3",
+    "bootstrap-material-design": "~0.3.0"
   }
 }

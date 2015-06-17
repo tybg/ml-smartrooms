@@ -13,6 +13,8 @@ var paths = {
 		sprites: assets + '/sprites/**/*.*',
         images: assets + '/img/**/*.*',
 		less: assets + '/css/less/*.less',
+        csslib: assets + '/css/lib/**/*.css',
+        fonts: assets + '/fonts/**/*.*',
         scripts: {
             basedir: assets + '/scripts',
             //TypeScripts
@@ -29,8 +31,9 @@ var paths = {
         basedir: distDir,
         scripts: distDir + '/scripts',
         styles: distDir + '/styles',
+        fonts: distDir + '/fonts',
         images: distDir + '/images',
-        sprites: distDir + '/sprites',        
+        sprites: distDir + '/sprites',
         files: distDir + '/**/*.*'
     }
 },
@@ -78,24 +81,16 @@ gulp.task('ts', function() {
     var tsResult = gulp.plumbedSrc(paths.src.scripts.ts)
                     .pipe(ts({ typescript: require('typescript'), target: 'ES5', module: 'amd' }));
     tsResult.js.pipe(gulp.dest(paths.dist.scripts));
-        /* Replacing with RequireJS *
-        .pipe(concat('app.js'))
-        .pipe(gulp.dest(paths.dist.scripts))
-        .pipe(uglify())
-        .pipe(rename('app.min.js'))
-        .pipe(gulp.dest(paths.dist.scripts));*/
-    /*return merge([ // Merge the two output streams, so this task is finished when the IO of both operations are done. 
-        tsResult.dts.pipe(gulp.dest(paths.dist.basedir + '/js/typings')),
-        tsResult.js.pipe(gulp.dest(paths.dist.scripts))
-    ]);*/
 });
 
 //Copy files from assets to dist as needed
 gulp.task('copy', function(){
-    return gulp.plumbedSrc(paths.src.scripts.requires)
-        .pipe(gulp.dest(paths.dist.scripts));
+    return merge([
+        gulp.plumbedSrc(paths.src.scripts.requires).pipe(gulp.dest(paths.dist.scripts)),
+        gulp.plumbedSrc(paths.src.fonts).pipe(gulp.dest(paths.dist.fonts))        
+    ]);
 })
-//Compile lib files which don't cooperate with CommonJS or Browserify, so should be compiled into a separate lib JS
+
 gulp.task('jslib', function(){
 	return pipe(
 		gulp.plumbedSrc(paths.src.scripts.lib),
@@ -104,6 +99,14 @@ gulp.task('jslib', function(){
 		uglify(),
 		rename('lib.min.js'),
 		gulp.dest(paths.dist.scripts)
+	);
+});
+
+gulp.task('csslib', function(){
+	return pipe(
+		gulp.plumbedSrc(paths.src.csslib),
+		concat('lib.min.css'),
+		gulp.dest(paths.dist.styles)
 	);
 });
 
@@ -198,5 +201,5 @@ gulp.task('buildapp', function(cb){
 
 //Build ERRYTING
 gulp.task('build', function(cb){
-    runSequence('clean', ['copy', 'jslib'], 'buildapp', cb);
+    runSequence('clean', ['copy', 'jslib', 'csslib'], 'buildapp', cb);
 });
