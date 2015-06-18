@@ -1,9 +1,17 @@
-var express = require('express');
-var router = express.Router();
+/// <reference path="../typings/node/node.d.ts"/>
+/// <reference path="../typings/express/express.d.ts"/>
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
-});
+var express = require('express'),
+    router = express.Router(),
+    controller = require('../controllers/index');
 
-module.exports = router;
+module.exports = function(io){
+    router.get('/', function(req, res, next){
+        io.emit('all', 'sup guyz!');
+        controller.home(req, res, next);
+    });
+    
+    router.get('/otherpage', controller.home);
+    
+    return router;
+};

@@ -1,4 +1,7 @@
 /// <reference path="typings/node/node.d.ts"/>
+/// <reference path="typings/express/express.d.ts"/>
+/// <reference path="typings/socket.io/socket.io.d.ts"/>
+
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
@@ -6,10 +9,10 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
-var routes = require('./routes/index');
-var users = require('./routes/users');
-
 var app = express();
+var io = require('socket.io')();
+io.serveClient(false);
+app.io = io;
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -23,8 +26,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', routes);
-app.use('/users', users);
+app.use('/', require('./routes/index')(app.io));
+//app.use('/users', require('./routes/users'));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

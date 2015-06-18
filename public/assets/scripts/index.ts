@@ -4,10 +4,13 @@
 /// <reference path="../../../typings/jquery/jquery.d.ts" />
 /// <reference path="../../../typings/ripples/ripples.d.ts" />
 /// <reference path="../../../typings/domready/domready.d.ts" />
+/// <reference path="../../../typings/socket.io-client/socket.io-client.d.ts" />
 
 "use strict";
 import ThreeGui = require('threegui');
 import domready = require('domready');
+import socketio = require('socket.io-client');
+
 var boxExample : ThreePsTutorial.BoxExample;
 
 module ThreePsTutorial{
@@ -25,6 +28,9 @@ module ThreePsTutorial{
 		camera : THREE.PerspectiveCamera;
 		//Objects		
 		mesh : THREE.Mesh;
+        
+        //Socket
+        socket = socketio();
 		
 		constructor(){
 			this.renderContainer = document.getElementById('map-container')			
@@ -60,6 +66,10 @@ module ThreePsTutorial{
 				this.addGui();
 				this.renderScene();
 			})
+            
+            this.socket.on('all', function(msg){
+                console.log('all msg received: ' + msg);
+            })
 		}
 		
 		private addGui(){
