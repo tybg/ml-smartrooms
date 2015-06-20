@@ -1,0 +1,263 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+    <Name>smartrooms</Name>
+    <RootNamespace>smartrooms</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>d79d2c13-395c-49e5-b9bb-c9b6c2bf4001</ProjectGuid>
+    <ProjectHome>.</ProjectHome>
+    <StartupFile>
+    </StartupFile>
+    <SearchPath>
+    </SearchPath>
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <ProjectTypeGuids>{3AF33F2E-1136-4D97-BBB7-1795711AC8B8};{349c5851-65df-11da-9384-00065b846f21};{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}</ProjectTypeGuids>
+    <ProjectView>ShowAllFiles</ProjectView>
+    <NodejsPort>3000</NodejsPort>
+    <StartWebBrowser>True</StartWebBrowser>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include=".gitignore" />
+    <Content Include=".settings\launch.json" />
+    <Content Include="bin\www" />
+    <Content Include="bower.json" />
+    <Content Include="package.json" />
+    <Content Include="public\assets\css\less\main.less" />
+    <Content Include="public\assets\css\lib\bootstrap.min.css" />
+    <Content Include="public\assets\css\lib\material.min.css" />
+    <Content Include="public\assets\css\lib\ripples.min.css" />
+    <Content Include="public\assets\css\lib\roboto.min.css" />
+    <Content Include="public\assets\fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="public\assets\fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="public\assets\fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="public\assets\fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="public\assets\fonts\glyphicons-halflings-regular.woff2" />
+    <Content Include="public\assets\fonts\Material-Design-Icons.eot" />
+    <Content Include="public\assets\fonts\Material-Design-Icons.svg" />
+    <Content Include="public\assets\fonts\Material-Design-Icons.ttf" />
+    <Content Include="public\assets\fonts\Material-Design-Icons.woff" />
+    <Content Include="public\assets\fonts\RobotoDraftBold.woff" />
+    <Content Include="public\assets\fonts\RobotoDraftBold.woff2" />
+    <Content Include="public\assets\fonts\RobotoDraftItalic.woff" />
+    <Content Include="public\assets\fonts\RobotoDraftItalic.woff2" />
+    <Content Include="public\assets\fonts\RobotoDraftMedium.woff" />
+    <Content Include="public\assets\fonts\RobotoDraftMedium.woff2" />
+    <Content Include="public\assets\fonts\RobotoDraftRegular.woff" />
+    <Content Include="public\assets\fonts\RobotoDraftRegular.woff2" />
+    <Content Include="public\assets\img\examples\grasslight-thin.jpg" />
+    <Content Include="public\assets\img\examples\SwedishRoyalCastle\nx.jpg" />
+    <Content Include="public\assets\img\examples\SwedishRoyalCastle\ny.jpg" />
+    <Content Include="public\assets\img\examples\SwedishRoyalCastle\nz.jpg" />
+    <Content Include="public\assets\img\examples\SwedishRoyalCastle\px.jpg" />
+    <Content Include="public\assets\img\examples\SwedishRoyalCastle\py.jpg" />
+    <Content Include="public\assets\img\examples\SwedishRoyalCastle\pz.jpg" />
+    <Content Include="public\assets\scripts\lib\README.md" />
+    <Content Include="public\build\fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="public\build\fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="public\build\fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="public\build\fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="public\build\fonts\glyphicons-halflings-regular.woff2" />
+    <Content Include="public\build\fonts\Material-Design-Icons.eot" />
+    <Content Include="public\build\fonts\Material-Design-Icons.svg" />
+    <Content Include="public\build\fonts\Material-Design-Icons.ttf" />
+    <Content Include="public\build\fonts\Material-Design-Icons.woff" />
+    <Content Include="public\build\fonts\RobotoDraftBold.woff" />
+    <Content Include="public\build\fonts\RobotoDraftBold.woff2" />
+    <Content Include="public\build\fonts\RobotoDraftItalic.woff" />
+    <Content Include="public\build\fonts\RobotoDraftItalic.woff2" />
+    <Content Include="public\build\fonts\RobotoDraftMedium.woff" />
+    <Content Include="public\build\fonts\RobotoDraftMedium.woff2" />
+    <Content Include="public\build\fonts\RobotoDraftRegular.woff" />
+    <Content Include="public\build\fonts\RobotoDraftRegular.woff2" />
+    <Content Include="public\build\images\examples\grasslight-thin.jpg" />
+    <Content Include="public\build\images\examples\SwedishRoyalCastle\nx.jpg" />
+    <Content Include="public\build\images\examples\SwedishRoyalCastle\ny.jpg" />
+    <Content Include="public\build\images\examples\SwedishRoyalCastle\nz.jpg" />
+    <Content Include="public\build\images\examples\SwedishRoyalCastle\px.jpg" />
+    <Content Include="public\build\images\examples\SwedishRoyalCastle\py.jpg" />
+    <Content Include="public\build\images\examples\SwedishRoyalCastle\pz.jpg" />
+    <Content Include="public\build\styles\lib.min.css" />
+    <Content Include="public\build\styles\main.css" />
+    <Content Include="public\build\styles\main.min.css" />
+    <Content Include="public\build\styles\main.min.css.map" />
+    <Content Include="public\favicon.ico" />
+    <Content Include="public\models\floorplan.blend" />
+    <Content Include="public\models\floorplan.blend1" />
+    <Content Include="public\models\floorplan.json" />
+    <Content Include="README.md" />
+    <Content Include="tsconfig.json" />
+    <Content Include="typings\webrtc\readme.md" />
+    <Content Include="views\error.jade" />
+    <Content Include="views\index.jade" />
+    <Content Include="views\layout.jade" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include=".settings\" />
+    <Folder Include="bin\" />
+    <Folder Include="controllers\" />
+    <Folder Include="public\" />
+    <Folder Include="public\assets\" />
+    <Folder Include="public\assets\css\" />
+    <Folder Include="public\assets\css\less\" />
+    <Folder Include="public\assets\css\lib\" />
+    <Folder Include="public\assets\fonts\" />
+    <Folder Include="public\assets\img\" />
+    <Folder Include="public\assets\img\examples\" />
+    <Folder Include="public\assets\img\examples\SwedishRoyalCastle\" />
+    <Folder Include="public\assets\scripts\" />
+    <Folder Include="public\assets\scripts\lib\" />
+    <Folder Include="public\assets\scripts\require\" />
+    <Folder Include="public\assets\sprites\" />
+    <Folder Include="public\build\" />
+    <Folder Include="public\build\fonts\" />
+    <Folder Include="public\build\images\" />
+    <Folder Include="public\build\images\examples\" />
+    <Folder Include="public\build\images\examples\SwedishRoyalCastle\" />
+    <Folder Include="public\build\scripts\" />
+    <Folder Include="public\build\sprites\" />
+    <Folder Include="public\build\styles\" />
+    <Folder Include="public\models\" />
+    <Folder Include="routes\" />
+    <Folder Include="typings\" />
+    <Folder Include="typings\bluebird\" />
+    <Folder Include="typings\browserify\" />
+    <Folder Include="typings\dat\" />
+    <Folder Include="typings\domready\" />
+    <Folder Include="typings\express\" />
+    <Folder Include="typings\gulp-autoprefixer\" />
+    <Folder Include="typings\gulp-concat\" />
+    <Folder Include="typings\gulp-less\" />
+    <Folder Include="typings\gulp-minify-css\" />
+    <Folder Include="typings\gulp-sourcemaps\" />
+    <Folder Include="typings\gulp-typescript\" />
+    <Folder Include="typings\gulp\" />
+    <Folder Include="typings\jquery\" />
+    <Folder Include="typings\lodash\" />
+    <Folder Include="typings\moment\" />
+    <Folder Include="typings\mongoose\" />
+    <Folder Include="typings\node\" />
+    <Folder Include="typings\ripples\" />
+    <Folder Include="typings\socket.io-client\" />
+    <Folder Include="typings\socket.io\" />
+    <Folder Include="typings\threejs\" />
+    <Folder Include="typings\webrtc\" />
+    <Folder Include="views\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="app.js" />
+    <Compile Include="controllers\index.js" />
+    <Compile Include="gulpfile.js" />
+    <Compile Include="public\assets\scripts\lib\dat-gui.js" />
+    <Compile Include="public\assets\scripts\lib\jquery.js" />
+    <Compile Include="public\assets\scripts\lib\lodash.js" />
+    <Compile Include="public\assets\scripts\lib\material.js" />
+    <Compile Include="public\assets\scripts\lib\ripples.js" />
+    <Compile Include="public\assets\scripts\lib\three.js" />
+    <Compile Include="public\assets\scripts\require\domready.js" />
+    <Compile Include="public\assets\scripts\require\require.min.js" />
+    <Compile Include="public\assets\scripts\require\socket.io-client.js" />
+    <Compile Include="public\build\scripts\domready.js" />
+    <Compile Include="public\build\scripts\index.js" />
+    <Compile Include="public\build\scripts\lib.js" />
+    <Compile Include="public\build\scripts\lib.min.js" />
+    <Compile Include="public\build\scripts\require.min.js" />
+    <Compile Include="public\build\scripts\socket.io-client.js" />
+    <Compile Include="public\build\scripts\threegui.js" />
+    <Compile Include="routes\index.js" />
+    <Compile Include="routes\users.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <TypeScriptCompile Include="public\assets\scripts\index.ts" />
+    <TypeScriptCompile Include="public\assets\scripts\threegui.ts" />
+    <TypeScriptCompile Include="typings\bluebird\bluebird.d.ts" />
+    <TypeScriptCompile Include="typings\browserify\browserify.d.ts" />
+    <TypeScriptCompile Include="typings\dat\dat.d.ts" />
+    <TypeScriptCompile Include="typings\domready\domready.d.ts" />
+    <TypeScriptCompile Include="typings\express\express.d.ts" />
+    <TypeScriptCompile Include="typings\gulp-autoprefixer\gulp-autoprefixer.d.ts" />
+    <TypeScriptCompile Include="typings\gulp-concat\gulp-concat.d.ts" />
+    <TypeScriptCompile Include="typings\gulp-less\gulp-less.d.ts" />
+    <TypeScriptCompile Include="typings\gulp-minify-css\gulp-minify-css.d.ts" />
+    <TypeScriptCompile Include="typings\gulp-sourcemaps\gulp-sourcemaps.d.ts" />
+    <TypeScriptCompile Include="typings\gulp-typescript\gulp-typescript.d.ts" />
+    <TypeScriptCompile Include="typings\gulp\gulp.d.ts" />
+    <TypeScriptCompile Include="typings\jquery\jquery.d.ts" />
+    <TypeScriptCompile Include="typings\lodash\lodash.d.ts" />
+    <TypeScriptCompile Include="typings\moment\moment-node.d.ts" />
+    <TypeScriptCompile Include="typings\moment\moment.d.ts" />
+    <TypeScriptCompile Include="typings\mongoose\mongoose.d.ts" />
+    <TypeScriptCompile Include="typings\node\node.d.ts" />
+    <TypeScriptCompile Include="typings\ripples\ripples.d.ts" />
+    <TypeScriptCompile Include="typings\socket.io-client\socket.io-client.d.ts" />
+    <TypeScriptCompile Include="typings\socket.io\socket.io.d.ts" />
+    <TypeScriptCompile Include="typings\threejs\detector.d.ts" />
+    <TypeScriptCompile Include="typings\threejs\three-canvasrenderer.d.ts" />
+    <TypeScriptCompile Include="typings\threejs\three-copyshader.d.ts" />
+    <TypeScriptCompile Include="typings\threejs\three-css3drenderer.d.ts" />
+    <TypeScriptCompile Include="typings\threejs\three-effectcomposer.d.ts" />
+    <TypeScriptCompile Include="typings\threejs\three-maskpass.d.ts" />
+    <TypeScriptCompile Include="typings\threejs\three-orbitcontrols.d.ts" />
+    <TypeScriptCompile Include="typings\threejs\three-projector.d.ts" />
+    <TypeScriptCompile Include="typings\threejs\three-renderpass.d.ts" />
+    <TypeScriptCompile Include="typings\threejs\three-shaderpass.d.ts" />
+    <TypeScriptCompile Include="typings\threejs\three-trackballcontrols.d.ts" />
+    <TypeScriptCompile Include="typings\threejs\three.d.ts" />
+    <TypeScriptCompile Include="typings\webrtc\MediaStream.d.ts" />
+    <TypeScriptCompile Include="typings\webrtc\RTCPeerConnection.d.ts" />
+  </ItemGroup>
+  <!-- Do not delete the following Import Project.  While this appears to do nothing it is a marker for setting TypeScript properties before our import that depends on them. -->
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="False" />
+  <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsTools.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>False</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>0</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:48022/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>True</UseCustomServer>
+          <CustomServerUrl>http://localhost:1337</CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}" User="">
+        <WebProjectProperties>
+          <StartPageUrl>
+          </StartPageUrl>
+          <StartAction>CurrentPage</StartAction>
+          <AspNetDebugging>True</AspNetDebugging>
+          <SilverlightDebugging>False</SilverlightDebugging>
+          <NativeDebugging>False</NativeDebugging>
+          <SQLDebugging>False</SQLDebugging>
+          <ExternalProgram>
+          </ExternalProgram>
+          <StartExternalURL>
+          </StartExternalURL>
+          <StartCmdLineArguments>
+          </StartCmdLineArguments>
+          <StartWorkingDirectory>
+          </StartWorkingDirectory>
+          <EnableENC>False</EnableENC>
+          <AlwaysStartWebServerOnDebug>False</AlwaysStartWebServerOnDebug>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>

@@ -193,16 +193,24 @@ export class GuiBuilder {
 	 */
 	addObj3dProps(gui : dat.GUI, obj3d : THREE.Object3D, folderName : string, openRot : boolean = false, openPos: boolean = false){
 		var rotFld = gui.addFolder(folderName + ' Rotation');
-		rotFld.add(obj3d.rotation, 'x').step(0.05).listen();
-		rotFld.add(obj3d.rotation, 'y').step(0.05).listen();
-		rotFld.add(obj3d.rotation, 'z').step(0.05).listen();
+		rotFld.add(obj3d.rotation, 'x').step(0.05);
+		rotFld.add(obj3d.rotation, 'y').step(0.05);
+		rotFld.add(obj3d.rotation, 'z').step(0.05);
 		var posFld = gui.addFolder(folderName + ' Position');
-		posFld.add(obj3d.position, 'x').step(0.5).listen();
-		posFld.add(obj3d.position, 'y').step(0.5).listen();
-		posFld.add(obj3d.position, 'z').step(0.5).listen();
+		posFld.add(obj3d.position, 'x').step(0.5);
+		posFld.add(obj3d.position, 'y').step(0.5);
+		posFld.add(obj3d.position, 'z').step(0.5);
 		if(openRot)
 			rotFld.open();
 		if(openPos)
 			posFld.open();
-	}
+    }
+    
+    addVector3Controls(gui : dat.GUI, vector3 : THREE.Vector3, step : number = 0.5, name : string = 'Vector3') : dat.GUI {
+        var v3Fld = gui.addFolder(name);
+        v3Fld.add(vector3, 'x').step(step);
+        v3Fld.add(vector3, 'y').step(step);
+        v3Fld.add(vector3, 'z').step(step);
+        return v3Fld;
+    }
 }

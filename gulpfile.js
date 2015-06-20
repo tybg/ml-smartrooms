@@ -114,7 +114,7 @@ gulp.task('less', function() {
     return pipe(
         gulp.plumbedSrc([paths.src.less, paths.dist.styles + '/sprite.css']),
         less(),
-        sourcemaps.init(),        
+        sourcemaps.init(),
         prefixer(),        
         concat('main.css'),        
         gulp.dest(paths.dist.styles),

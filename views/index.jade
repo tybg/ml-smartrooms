@@ -2,5 +2,9 @@ extends layout
 
 block content
   #opts-wrap
-    button.btn.btn-success Button
+    .checkbox.checkbox-primary
+        label
+            input#enable-controls(type='checkbox', checked='checked')
+            |&nbsp;&nbsp;Enable Controls
+    //button.btn.btn-success Button
   #map-container

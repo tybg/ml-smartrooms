@@ -4,7 +4,7 @@ html
     title= title
     meta(name='viewport', content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no')
     link(rel='stylesheet', href='/build/styles/lib.min.css')
-    link(rel='stylesheet', href='/build/styles/main.css')
+    link(rel='stylesheet', href='/build/styles/main.min.css')
     block headblock
   body
     nav.navbar.navbar-inverse.navbar-fixed-top
@@ -19,9 +19,9 @@ html
         #navbar.collapse.navbar-collapse
           ul.nav.navbar-nav
             li.active
-              a(href='#') Home
+              a(href='#') Home              
         // /.nav-collapse
     .container-fluid
       block content
-    script(type='text/javascript', src='/build/scripts/lib.js')
+    script(type='text/javascript', src='/build/scripts/lib.min.js')
     script(type='text/javascript', data-main='/build/scripts/index' src='/build/scripts/require.min.js')
