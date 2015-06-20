@@ -192,14 +192,15 @@ export class GuiBuilder {
 	 * @param openPos Whether to open the {name} Position folder by default 
 	 */
 	addObj3dProps(gui : dat.GUI, obj3d : THREE.Object3D, folderName : string, openRot : boolean = false, openPos: boolean = false){
-		var rotFld = gui.addFolder(folderName + ' Rotation');
-		rotFld.add(obj3d.rotation, 'x').step(0.05);
-		rotFld.add(obj3d.rotation, 'y').step(0.05);
-		rotFld.add(obj3d.rotation, 'z').step(0.05);
+        var rotFld = gui.addFolder(folderName + ' Rotation');
+        var rotStep = Math.PI / 12;
+        rotFld.add(obj3d.rotation, 'x').step(rotStep).listen();
+        rotFld.add(obj3d.rotation, 'y').step(rotStep).listen();
+        rotFld.add(obj3d.rotation, 'z').step(rotStep).listen();
 		var posFld = gui.addFolder(folderName + ' Position');
-		posFld.add(obj3d.position, 'x').step(0.5);
-		posFld.add(obj3d.position, 'y').step(0.5);
-		posFld.add(obj3d.position, 'z').step(0.5);
+		posFld.add(obj3d.position, 'x').step(0.5).listen();
+        posFld.add(obj3d.position, 'y').step(0.5).listen();
+        posFld.add(obj3d.position, 'z').step(0.5).listen();
 		if(openRot)
 			rotFld.open();
 		if(openPos)
