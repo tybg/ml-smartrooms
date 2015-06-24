@@ -5,6 +5,9 @@
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
     <Name>smartrooms</Name>
     <RootNamespace>smartrooms</RootNamespace>
+    <EnableTypeScript>true</EnableTypeScript>
+    <TypeScriptSourceMap>true</TypeScriptSourceMap>
+    <TypeScriptModuleKind>CommonJS</TypeScriptModuleKind>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -20,7 +23,7 @@
     <OutputPath>.</OutputPath>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <ProjectTypeGuids>{3AF33F2E-1136-4D97-BBB7-1795711AC8B8};{349c5851-65df-11da-9384-00065b846f21};{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}</ProjectTypeGuids>
-    <ProjectView>ShowAllFiles</ProjectView>
+    <ProjectView>ProjectFiles</ProjectView>
     <NodejsPort>3000</NodejsPort>
     <StartWebBrowser>True</StartWebBrowser>
   </PropertyGroup>
@@ -120,6 +123,7 @@
     <Folder Include="public\assets\img\examples\SwedishRoyalCastle\" />
     <Folder Include="public\assets\scripts\" />
     <Folder Include="public\assets\scripts\lib\" />
+    <Folder Include="public\assets\scripts\lib\three\" />
     <Folder Include="public\assets\scripts\require\" />
     <Folder Include="public\assets\sprites\" />
     <Folder Include="public\build\" />
@@ -154,6 +158,7 @@
     <Folder Include="typings\socket.io-client\" />
     <Folder Include="typings\socket.io\" />
     <Folder Include="typings\threejs\" />
+    <Folder Include="typings\tween.js\" />
     <Folder Include="typings\webrtc\" />
     <Folder Include="views\" />
   </ItemGroup>
@@ -167,6 +172,9 @@
     <Compile Include="public\assets\scripts\lib\material.js" />
     <Compile Include="public\assets\scripts\lib\ripples.js" />
     <Compile Include="public\assets\scripts\lib\three.js" />
+    <Compile Include="public\assets\scripts\lib\three\three.OrbitControls.js" />
+    <Compile Include="public\assets\scripts\lib\three\three.EditorControls.js" />
+    <Compile Include="public\assets\scripts\lib\Tween.js" />
     <Compile Include="public\assets\scripts\require\domready.js" />
     <Compile Include="public\assets\scripts\require\require.min.js" />
     <Compile Include="public\assets\scripts\require\socket.io-client.js" />
@@ -216,6 +224,7 @@
     <TypeScriptCompile Include="typings\threejs\three-shaderpass.d.ts" />
     <TypeScriptCompile Include="typings\threejs\three-trackballcontrols.d.ts" />
     <TypeScriptCompile Include="typings\threejs\three.d.ts" />
+    <TypeScriptCompile Include="typings\tween.js\tween.js.d.ts" />
     <TypeScriptCompile Include="typings\webrtc\MediaStream.d.ts" />
     <TypeScriptCompile Include="typings\webrtc\RTCPeerConnection.d.ts" />
   </ItemGroup>

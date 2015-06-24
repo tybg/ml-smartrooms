@@ -11,7 +11,11 @@ module.exports = function(io){
         controller.home(req, res, next);
     });
     
-    router.get('/otherpage', controller.home);
+    router.get('/bookroom', function(req, res, next){
+        console.log(req.query);
+        io.emit('book', parseInt(req.query.room, 10));
+        controller.home(req, res, next);
+    });
     
     return router;
 };

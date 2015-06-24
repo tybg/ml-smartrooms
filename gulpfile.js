@@ -50,7 +50,6 @@ var paths = {
 	concat = require('gulp-concat'),
     gulpif = require('gulp-if'),
     ignore = require('gulp-ignore'),
-	imagemin = require('gulp-imagemin'),
 	less = require('gulp-less'),
 	minify = require('gulp-minify-css'),
     nodemon = require('gulp-nodemon'),
@@ -126,19 +125,6 @@ gulp.task('less', function() {
     );
 });
 
-gulp.task('images', function() {
-    return pipe(
-        gulp.plumbedSrc(paths.src.images),
-        changed(paths.dist.images),
-        imagemin({
-            optimizationLevel: 3,
-            progressive: true,
-            interlaced: true
-        }),
-        gulp.dest(paths.dist.images)
-    );
-});
-
 gulp.task('sprite', function() {
     var spriteData = gulp.plumbedSrc(paths.src.sprites).pipe(spritesmith({
         imgName: 'sprite.png',
@@ -196,7 +182,7 @@ gulp.task('stage', function(cb){
 
 //Build the app only (no lib compilation or require file copying)
 gulp.task('buildapp', function(cb){
-   runSequence(['sprite', 'less', 'images', 'ts'], cb);
+   runSequence(['sprite', 'less', 'ts'], cb);
 });
 
 //Build ERRYTING

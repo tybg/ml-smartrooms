@@ -24,7 +24,9 @@ module ThreePsTutorial{
 		renderContainer : HTMLElement;
 		//Lights
 		spotLight = new THREE.SpotLight(0x3f51b5, 1.1, 270, THREE.Math.degToRad(50));
-		dirLight = new THREE.DirectionalLight(0xffffff, 0.85);
+		ambientLight = new THREE.AmbientLight(0xffffff);
+        pointLights : THREE.PointLight[];
+        pointLightDefaultPositions = [{ x: -7.5, y: -6, z: -50}, { x: -7.5, y: -6, z: -10}];
 		//Cameras
 		camera : THREE.PerspectiveCamera;
 		//Objects
@@ -41,7 +43,6 @@ module ThreePsTutorial{
             this.renderContainer = document.getElementById('map-container');
 			this.renderer.setSize(this.renderContainer.clientWidth, this.renderContainer.clientHeight);
 			this.renderContainer.appendChild(this.renderer.domElement);
-			
             //Handle click events with RayCaster (see http://threejs.org/docs/#Reference/Core/Raycaster)
             this.renderer.domElement.addEventListener('click', evt => {
                 this.highlightSelected(this.getContainerClickVector2(evt));
@@ -55,9 +56,17 @@ module ThreePsTutorial{
 			//Add Lighting
             this.spotLight.target = this.spotLightTarget;
 			this.scene.add(this.spotLight);
-			this.dirLight.position.set(27, 85, 0);
-			this.dirLight.rotation.x = Math.PI / 2;
-			this.scene.add(this.dirLight);
+			this.scene.add(this.ambientLight);
+            this.pointLights = _.map(this.pointLightDefaultPositions, (pos) => {
+                var pl = new THREE.PointLight(0x00cc00, 1.0, 30);
+                pl.position.x = pos.x;
+                pl.position.y = pos.y;
+                pl.position.z = pos.z;
+                return pl;
+            });
+            _.each(this.pointLights, (pl) => {
+                this.scene.add(pl);
+            });
             this.scene.fog = new THREE.Fog(0x55aaff, 500, 1200);
 
 			//Configure Camera
@@ -70,7 +79,7 @@ module ThreePsTutorial{
             this.orbitControls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
 
 			var loader = new THREE.JSONLoader();
-            loader.load('/models/floorplan.json', (geometry, materials) => {
+            loader.load('/models/floorplan_floor1.json', (geometry, materials) => {
                 var material = new THREE.MeshFaceMaterial(materials);
                 this.mesh = new THREE.Mesh(geometry, material);
                 //this.mesh.rotation.x = THREE.Math.degToRad(30);
@@ -85,23 +94,22 @@ module ThreePsTutorial{
             });
             
             
-            this.socket.on('all', msg => {
-                console.log('all msg received: ' + msg);
+            this.socket.on('book', room => {
+                console.log('booking room', room);
+                this.pointLights[parseInt(room, 10)].color = new THREE.Color(0xcc0000);
             });
         }
 
         private getContainerClickVector2(evt: MouseEvent): THREE.Vector2 {
-            var clickVector2 = new THREE.Vector2((evt.offsetX / this.renderer.domElement.clientWidth) * 2 - 1, -(evt.offsetY / this.renderer.domElement.clientHeight) * 2 + 1);
-            //console.log(clickVector2, 'offsets: ' + (evt.offsetX) + ', ' + (evt.offsetY));
-            return clickVector2;
+            return new THREE.Vector2((evt.offsetX / this.renderer.domElement.clientWidth) * 2 - 1, -(evt.offsetY / this.renderer.domElement.clientHeight) * 2 + 1);
         }
 
 		private addGui(){
             var threeGuiBuilder = new ThreeGui.GuiBuilder();
             //threeGuiBuilder.addPhongMaterialGui(this.gui, this.mesh, <THREE.MeshPhongMaterial>this.mesh.material, this.mesh.geometry);
-            threeGuiBuilder.addLightGui(this.gui, this.dirLight);
+            threeGuiBuilder.addLightGui(this.gui, this.ambientLight);
             threeGuiBuilder.addLightGui(this.gui, this.spotLight);
-            threeGuiBuilder.addObj3dProps(this.gui, this.dirLight, this.dirLight.type);
+            threeGuiBuilder.addObj3dProps(this.gui, this.ambientLight, this.ambientLight.type);
             threeGuiBuilder.addObj3dProps(this.gui, this.spotLight, this.spotLight.type);
         }
 

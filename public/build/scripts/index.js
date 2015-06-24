@@ -21,7 +21,8 @@ define(["require", "exports", 'threegui', 'domready', 'socket.io-client'], funct
                 this.renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
                 //Lights
                 this.spotLight = new THREE.SpotLight(0x3f51b5, 1.1, 270, THREE.Math.degToRad(50));
-                this.dirLight = new THREE.DirectionalLight(0xffffff, 0.85);
+                this.ambientLight = new THREE.AmbientLight(0xffffff);
+                this.pointLightDefaultPositions = [{ x: -7.5, y: -6, z: -50 }, { x: -7.5, y: -6, z: -10 }];
                 this.rayCaster = new THREE.Raycaster();
                 //Socket
                 this.socket = socketio();
@@ -47,9 +48,17 @@ define(["require", "exports", 'threegui', 'domready', 'socket.io-client'], funct
                 //Add Lighting
                 this.spotLight.target = this.spotLightTarget;
                 this.scene.add(this.spotLight);
-                this.dirLight.position.set(27, 85, 0);
-                this.dirLight.rotation.x = Math.PI / 2;
-                this.scene.add(this.dirLight);
+                this.scene.add(this.ambientLight);
+                this.pointLights = _.map(this.pointLightDefaultPositions, function (pos) {
+                    var pl = new THREE.PointLight(0x00cc00, 1.0, 30);
+                    pl.position.x = pos.x;
+                    pl.position.y = pos.y;
+                    pl.position.z = pos.z;
+                    return pl;
+                });
+                _.each(this.pointLights, function (pl) {
+                    _this.scene.add(pl);
+                });
                 this.scene.fog = new THREE.Fog(0x55aaff, 500, 1200);
                 //Configure Camera
                 this.camera = new THREE.PerspectiveCamera(90, this.renderContainer.clientWidth / this.renderContainer.clientHeight, 0.1, 1200);
@@ -59,7 +68,7 @@ define(["require", "exports", 'threegui', 'domready', 'socket.io-client'], funct
                 //Controls
                 this.orbitControls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
                 var loader = new THREE.JSONLoader();
-                loader.load('/models/floorplan.json', function (geometry, materials) {
+                loader.load('/models/floorplan_floor1.json', function (geometry, materials) {
                     var material = new THREE.MeshFaceMaterial(materials);
                     _this.mesh = new THREE.Mesh(geometry, material);
                     //this.mesh.rotation.x = THREE.Math.degToRad(30);
@@ -71,21 +80,20 @@ define(["require", "exports", 'threegui', 'domready', 'socket.io-client'], funct
                     _this.addGui();
                     _this.renderScene();
                 });
-                this.socket.on('all', function (msg) {
-                    console.log('all msg received: ' + msg);
+                this.socket.on('book', function (room) {
+                    console.log('booking room', room);
+                    _this.pointLights[parseInt(room, 10)].color = new THREE.Color(0xcc0000);
                 });
             }
             BoxExample.prototype.getContainerClickVector2 = function (evt) {
-                var clickVector2 = new THREE.Vector2((evt.offsetX / this.renderer.domElement.clientWidth) * 2 - 1, -(evt.offsetY / this.renderer.domElement.clientHeight) * 2 + 1);
-                //console.log(clickVector2, 'offsets: ' + (evt.offsetX) + ', ' + (evt.offsetY));
-                return clickVector2;
+                return new THREE.Vector2((evt.offsetX / this.renderer.domElement.clientWidth) * 2 - 1, -(evt.offsetY / this.renderer.domElement.clientHeight) * 2 + 1);
             };
             BoxExample.prototype.addGui = function () {
                 var threeGuiBuilder = new ThreeGui.GuiBuilder();
                 //threeGuiBuilder.addPhongMaterialGui(this.gui, this.mesh, <THREE.MeshPhongMaterial>this.mesh.material, this.mesh.geometry);
-                threeGuiBuilder.addLightGui(this.gui, this.dirLight);
+                threeGuiBuilder.addLightGui(this.gui, this.ambientLight);
                 threeGuiBuilder.addLightGui(this.gui, this.spotLight);
-                threeGuiBuilder.addObj3dProps(this.gui, this.dirLight, this.dirLight.type);
+                threeGuiBuilder.addObj3dProps(this.gui, this.ambientLight, this.ambientLight.type);
                 threeGuiBuilder.addObj3dProps(this.gui, this.spotLight, this.spotLight.type);
             };
             BoxExample.prototype.addRayCasterDebug = function () {
