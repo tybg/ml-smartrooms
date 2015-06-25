@@ -18,7 +18,7 @@ var paths = {
         scripts: {
             basedir: assets + '/scripts',
             //TypeScripts
-            ts: assets + '/scripts/*.ts',
+            ts: assets + '/scripts/**/*.ts',
             //Uglify and concat these lib scripts into lib[.min].js
             lib: assets + '/scripts/lib/**/*.js',
             //Require.js and associated plugins/modules - to be copied to build/js!

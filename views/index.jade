@@ -1,10 +1,11 @@
 extends layout
 
 block content
-  #opts-wrap
+    div(ui-view='')
+    #opts-wrap
     .checkbox.checkbox-primary
         label
             input#enable-controls(type='checkbox', checked='checked')
             |&nbsp;&nbsp;Enable Controls
     //button.btn.btn-success Button
-  #map-container
+    #map-container
