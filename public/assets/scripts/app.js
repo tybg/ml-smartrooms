@@ -19,11 +19,13 @@ var angularRoute = require('angular-route');
 var restangular = require('restangular');
 var uiRouter = require('angular.ui.router');
 var floorplan = require('controllers/floorplan');
+var globaldirectives = require('directives/NgGlobals');
 var lib = require('lib');
-var fpCtrl = new floorplan.FloorplanControllers();
+var fpCtrl = new floorplan.Floorplan();
+var globalDirectives = new globaldirectives.GlobalDirectives();
 var blah = [angularRoute, restangular, uiRouter, lib];
 //import angularAMD = require('angularAMD');
-var app = angular.module('smartrooms', ['smartrooms.floorplancontrollers', 'restangular', 'ui.router']);
+var app = angular.module('smartrooms', ['smartrooms.floorplancontrollers', 'smartrooms.globaldirectives', 'restangular', 'ui.router']);
 app.config(['$httpProvider', 'RestangularProvider', '$stateProvider', '$urlRouterProvider', function ($httpProvider, RestangularProvider, $stateProvider, $urlRouterProvider) {
         $urlRouterProvider.otherwise('/');
         RestangularProvider.setResponseExtractor(function (resp, oper, url) {
@@ -63,7 +65,7 @@ app.config(['$httpProvider', 'RestangularProvider', '$stateProvider', '$urlRoute
         $stateProvider.state('home', {
             url: '/',
             controller: 'FloorplanViewCtrl',
-            template: '<div id="floorplandiv"><div floorplan-view></div> Here is a div with some stuff in a template, and: {{message}}</div>'
+            template: '<div id="floorplandiv"><div floorplan-view></div></div>'
         });
     }]);
 app.run(function () {

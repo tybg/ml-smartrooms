@@ -20,13 +20,15 @@ import angularRoute = require('angular-route');
 import restangular = require('restangular');
 import uiRouter = require('angular.ui.router');
 import floorplan = require('controllers/floorplan');
+import globaldirectives = require('directives/NgGlobals');
 import lib = require('lib');
 
-var fpCtrl = new floorplan.FloorplanControllers();
+var fpCtrl = new floorplan.Floorplan();
+var globalDirectives = new globaldirectives.GlobalDirectives();
 var blah = [angularRoute, restangular, uiRouter, lib];
 
 //import angularAMD = require('angularAMD');
-var app = angular.module('smartrooms', ['smartrooms.floorplancontrollers', 'restangular', 'ui.router']);
+var app = angular.module('smartrooms', ['smartrooms.floorplancontrollers', 'smartrooms.globaldirectives', 'restangular', 'ui.router']);
 app.config(['$httpProvider', 'RestangularProvider', '$stateProvider', '$urlRouterProvider', ($httpProvider : ng.IHttpProvider, RestangularProvider : restangular.IProvider, $stateProvider : router.IStateProvider, $urlRouterProvider : ng.route.IRouteProvider) => {
     $urlRouterProvider.otherwise('/');
     RestangularProvider.setResponseExtractor((resp, oper, url) => {
@@ -66,7 +68,7 @@ app.config(['$httpProvider', 'RestangularProvider', '$stateProvider', '$urlRoute
     $stateProvider.state('home', {
         url: '/',
         controller: 'FloorplanViewCtrl',
-        template: '<div id="floorplandiv"><div floorplan-view></div> Here is a div with some stuff in a template, and: {{message}}</div>'
+        template: '<div id="floorplandiv"><div floorplan-view></div></div>'
     });
 }]);
 

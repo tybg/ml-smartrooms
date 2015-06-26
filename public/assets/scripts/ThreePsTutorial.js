@@ -2,14 +2,15 @@
 var Threegui = require("threegui");
 var socketio = require('socket.io-client');
 var BoxExample = (function () {
-    function BoxExample() {
+    function BoxExample(htmlElem) {
         var _this = this;
         this.gui = new dat.GUI();
         //Scene/Renderer
         this.scene = new THREE.Scene();
         this.renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
         //Lights
-        this.spotLight = new THREE.SpotLight(0x3f51b5, 1.1, 270, THREE.Math.degToRad(50));
+        this.spotLight = new THREE.SpotLight(0x3f51b5, 1.1, 270, THREE.Math.degToRad(30));
+        this.spotLightHelper = new THREE.SpotLightHelper(this.spotLight, 20, 20);
         this.ambientLight = new THREE.AmbientLight(0xffffff);
         this.pointLightDefaultPositions = [{ x: -7.5, y: -6, z: -50 }, { x: -7.5, y: -6, z: -10 }];
         this.rayCaster = new THREE.Raycaster();
@@ -23,7 +24,7 @@ var BoxExample = (function () {
             _this.renderer.render(_this.scene, _this.camera);
             TWEEN.update();
         };
-        this.renderContainer = document.getElementById('map-container');
+        this.renderContainer = htmlElem;
         this.renderer.setSize(this.renderContainer.clientWidth, this.renderContainer.clientHeight);
         this.renderContainer.appendChild(this.renderer.domElement);
         //Handle click events with RayCaster (see http://threejs.org/docs/#Reference/Core/Raycaster)
@@ -37,6 +38,7 @@ var BoxExample = (function () {
         //Add Lighting
         this.spotLight.target = this.spotLightTarget;
         this.scene.add(this.spotLight);
+        this.scene.add(this.spotLightHelper);
         this.scene.add(this.ambientLight);
         this.pointLights = _.map(this.pointLightDefaultPositions, function (pos) {
             var pl = new THREE.PointLight(0x00cc00, 1.0, 30);
@@ -47,6 +49,8 @@ var BoxExample = (function () {
         });
         _.each(this.pointLights, function (pl) {
             _this.scene.add(pl);
+            var plHelper = new THREE.PointLightHelper(pl, 10);
+            _this.scene.add(plHelper);
         });
         this.scene.fog = new THREE.Fog(0x55aaff, 500, 1200);
         //Configure Camera
@@ -62,7 +66,7 @@ var BoxExample = (function () {
             _this.mesh = new THREE.Mesh(geometry, material);
             //this.mesh.rotation.x = THREE.Math.degToRad(30);
             _this.scene.add(_this.mesh);
-            _this.spotLight.position.set(_this.mesh.position.x, 100, _this.mesh.position.z);
+            _this.spotLight.position.set(_this.mesh.position.x, 10, _this.mesh.position.z);
             //this.spotLight.lookAt(this.mesh.position);
             _this.camera.lookAt(_this.mesh.position);
             //Add GUI
@@ -95,22 +99,12 @@ var BoxExample = (function () {
         var line = new THREE.Line(geometry, material);
         this.scene.add(line);
     };
-    BoxExample.prototype.addSpotlightDebug = function (target) {
-        var material = new THREE.LineBasicMaterial({
-            color: 0x0000ff
-        });
-        var geometry = new THREE.Geometry();
-        geometry.vertices.push(this.spotLight.position);
-        geometry.vertices.push(target || this.mesh.position);
-        var line = new THREE.Line(geometry, material);
-        this.scene.add(line);
-    };
     BoxExample.prototype.highlightSelected = function (normalizedClick) {
         var _this = this;
         this.rayCaster.setFromCamera(normalizedClick, this.camera);
         var intersects = this.rayCaster.intersectObject(this.mesh, true);
         intersects.forEach(function (intersection) {
-            console.log('Intersected at', intersection.point);
+            //console.log('Intersected at', intersection.point);
             var tweenPosition = _this.spotLight.position.clone();
             var slTween = new TWEEN.Tween(tweenPosition).to({ x: intersection.point.x, y: _this.spotLight.position.y, z: intersection.point.z }, 1000);
             slTween.easing(TWEEN.Easing.Exponential.Out);
@@ -119,6 +113,9 @@ var BoxExample = (function () {
                 _this.spotLightTarget.position.x = intersection.point.x;
                 _this.spotLightTarget.position.y = intersection.point.y;
                 _this.spotLightTarget.position.z = intersection.point.z;
+            });
+            slTween.onComplete(function () {
+                _this.spotLightHelper.update();
             });
             slTween.start();
         });

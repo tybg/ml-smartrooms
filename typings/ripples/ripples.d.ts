@@ -19,11 +19,12 @@ interface Material {
 	/**
 	 * Apply ripples.js to the default elements
 	 */
-	ripples() : void,
+	ripples(...args: any[]) : void,
 	/**
 	 * Enable the MD styles for text inputs, and other kinds of inputs (number, email, file, etc.)
 	 */
-	input() : void,
+	input() : void;
+    input(p1: any),
 	/**
 	 * Enable the MD styles for checkboxes (remember to follow the markup guidelines)
 	 * @example <div class="radio/checkbox radio-primary">

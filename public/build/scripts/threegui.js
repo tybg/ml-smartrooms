@@ -86,8 +86,8 @@ define(["require", "exports"], function (require, exports) {
                 }
             };
             //Set up demo stuff
-            this.envMaps = new EnvMapper();
-            this.textureMaps = new TextureMapper();
+            //this.envMaps = new EnvMapper();
+            //this.textureMaps = new TextureMapper();		
         }
         GuiBuilder.prototype.handleColorChange = function (color) {
             return function (value) {
@@ -120,7 +120,6 @@ define(["require", "exports"], function (require, exports) {
                 geometry.colorsNeedUpdate = true;
             };
         };
-        ;
         GuiBuilder.prototype.addPhongMaterialGui = function (gui, mesh, material, geometry) {
             var data = {
                 color: material.color.getHex(),

@@ -1,58 +1,34 @@
 /// <reference path="../../../../typings/angularjs/angular.d.ts" />
-/* Example only -- probably not a good idea to do this, should rather import controllers into the main app.ts
-import _app = require("../app");
-var app = <ng.IModule>_app;*/
 var ThreePsTutorial = require("../ThreePsTutorial");
-var FloorplanControllers = (function () {
-    function FloorplanControllers() {
-        angular.module('smartrooms.floorplancontrollers', ['restangular'])
+var Floorplan = (function () {
+    function Floorplan() {
+        this.module = angular.module('smartrooms.floorplancontrollers', ['restangular'])
             .controller('FloorplanViewCtrl', ['$scope', this.floorplanViewCtrl])
             .directive('floorplanView', this.floorplanViewDirective);
-        /*
-        var boxExample: ThreePsTutorial.BoxExample;
-    domready(() => {
-        boxExample = new ThreePsTutorial.BoxExample();
-    
-        window.addEventListener('resize', () => {
-            boxExample.camera.aspect = boxExample.renderContainer.clientWidth / boxExample.renderContainer.clientHeight;
-            boxExample.camera.updateProjectionMatrix();
-            boxExample.renderer.setSize(boxExample.renderContainer.clientWidth, boxExample.renderContainer.clientHeight);
-        }, false);
-    
-        $.material.init();
-        $('.dg.main').css('margin-top', boxExample.renderer.domElement.offsetTop + 'px');
-    
-        document.getElementById('enable-controls').addEventListener('change', function (evt) {
-            boxExample.orbitControls.enabled = this.checked;
-        });
-    });
-        */
     }
-    FloorplanControllers.prototype.floorplanViewCtrl = function ($scope) {
+    Floorplan.prototype.floorplanViewCtrl = function ($scope) {
         $scope.message = 'This is a message from $scope';
     };
-    FloorplanControllers.prototype.floorplanViewDirective = function () {
+    Floorplan.prototype.floorplanViewDirective = function () {
         var fpViewDir = {
             scope: true,
             restrict: 'EA',
-            link: function (scope) {
+            templateUrl: 'templates/floorplan/main.html',
+            link: function (scope, elem) {
+                var _this = this;
                 console.log('linked');
-                var boxExample = new ThreePsTutorial.BoxExample();
+                this.floorplanRender = new ThreePsTutorial.BoxExample(elem.find('#map-container')[0]);
                 window.addEventListener('resize', function () {
-                    boxExample.camera.aspect = boxExample.renderContainer.clientWidth / boxExample.renderContainer.clientHeight;
-                    boxExample.camera.updateProjectionMatrix();
-                    boxExample.renderer.setSize(boxExample.renderContainer.clientWidth, boxExample.renderContainer.clientHeight);
+                    _this.floorplanRender.camera.aspect = _this.floorplanRender.renderContainer.clientWidth / _this.floorplanRender.renderContainer.clientHeight;
+                    _this.floorplanRender.camera.updateProjectionMatrix();
+                    _this.floorplanRender.renderer.setSize(_this.floorplanRender.renderContainer.clientWidth, _this.floorplanRender.renderContainer.clientHeight);
                 }, false);
-                $.material.init();
-                $('.dg.main').css('margin-top', boxExample.renderer.domElement.offsetTop + 'px');
-                document.getElementById('enable-controls').addEventListener('change', function (evt) {
-                    boxExample.orbitControls.enabled = this.checked;
-                });
+                $('.dg.main').css('margin-top', this.floorplanRender.renderer.domElement.offsetTop + 'px');
             }
         };
         return fpViewDir;
     };
-    return FloorplanControllers;
+    return Floorplan;
 })();
-exports.FloorplanControllers = FloorplanControllers;
+exports.Floorplan = Floorplan;
 //# sourceMappingURL=floorplan.js.map

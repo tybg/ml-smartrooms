@@ -50,8 +50,8 @@ export class GuiBuilder {
 	 */
 	constructor() {
 		//Set up demo stuff
-		this.envMaps = new EnvMapper();
-		this.textureMaps = new TextureMapper();		
+		//this.envMaps = new EnvMapper();
+		//this.textureMaps = new TextureMapper();		
 	}
 	
 	private constants = {
@@ -141,7 +141,7 @@ export class GuiBuilder {
 			geometry.normalsNeedUpdate = true;
 			geometry.colorsNeedUpdate = true;	
 		};
-	};
+	}
 	
 	addPhongMaterialGui(gui : dat.GUI, mesh : THREE.Mesh, material : THREE.MeshPhongMaterial, geometry : THREE.Geometry){
 		var data = {
