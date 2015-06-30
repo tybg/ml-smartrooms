@@ -79,7 +79,7 @@ declare module "mongoose" {
   }
   export module Types {
     export class ObjectId {
-      constructor(id: string|number);
+      constructor(id?: string|number);
       toHexString(): string;
       equals(other: ObjectId): boolean;
       getTimestamp(): Date;
@@ -146,6 +146,8 @@ declare module "mongoose" {
     create(doc: Object, fn?: (err: any, res: T) => void): Promise<T>;
     create(doc1: Object, doc2: Object, fn?: (err: any, res1: T, res2: T) => void): Promise<T[]>;
     create(doc1: Object, doc2: Object, doc3: Object, fn?: (err: any, res1: T, res2: T, res3: T) => void): Promise<T[]>;
+    create(docs: Object[], fn?: (err: any, res: T[]) => void): Promise<T[]>;
+    
     discriminator<U extends Document>(name: string, schema: Schema): Model<U>;
     distinct(field: string, callback?: (err: any, res: T[]) => void): Query<T[]>;
     distinct(field: string, conditions: Object, callback?: (err: any, res: T[]) => void): Query<T[]>;
@@ -246,7 +248,7 @@ declare module "mongoose" {
     value: Val;
   }
 
-  export class Query<T> {
+  export class Query<T> extends Promise<T> {
     exec(callback?: (err: any, res: T) => void): Promise<T>;
     exec(operation: string, callback?: (err: any, res: T) => void): Promise<T>;
     exec(operation: Function, callback?: (err: any, res: T) => void): Promise<T>;
@@ -383,6 +385,11 @@ declare module "mongoose" {
     _id: Types.ObjectId;
 
     equals(doc: Document): boolean;
+    /**
+     * Explicitly executes population and returns a promise. Useful for ES6 integration.
+     * @returns Promise - promise that resolves to the document when population is done
+     */
+    execPopulate<T>(): Promise<T>;
     get(path: string, type?: new(...args: any[]) => any): any;
     inspect(options?: Object): string;
     invalidate(path: string, errorMsg: string, value: any): void;
@@ -458,4 +465,3 @@ declare module "mongoose" {
   }
 
 }
-

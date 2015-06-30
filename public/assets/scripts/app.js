@@ -21,10 +21,11 @@ var uiRouter = require('angular.ui.router');
 var floorplan = require('controllers/floorplan');
 var globaldirectives = require('directives/NgGlobals');
 var lib = require('lib');
+//Instantiate angular modules
 var fpCtrl = new floorplan.Floorplan();
 var globalDirectives = new globaldirectives.GlobalDirectives();
+//Force TS compiler to include these
 var blah = [angularRoute, restangular, uiRouter, lib];
-//import angularAMD = require('angularAMD');
 var app = angular.module('smartrooms', ['smartrooms.floorplancontrollers', 'smartrooms.globaldirectives', 'restangular', 'ui.router']);
 app.config(['$httpProvider', 'RestangularProvider', '$stateProvider', '$urlRouterProvider', function ($httpProvider, RestangularProvider, $stateProvider, $urlRouterProvider) {
         $urlRouterProvider.otherwise('/');

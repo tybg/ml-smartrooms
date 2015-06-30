@@ -9,10 +9,23 @@
 var assets = __dirname + '/public/assets';
 var distDir = __dirname + '/public/build';
 var paths = {
-	src: {
-		sprites: assets + '/sprites/**/*.*',
+    server: {
+        ts: ['./controllers/**/*.ts',
+            './models/**/*.ts',
+            './routes/**/*.ts',
+            './utils/**/*.ts'
+        ]/*,
+        build: {
+            controllers: __dirname + '/controllers',
+            routes: __dirname + '/routes',
+            controllertypings: __dirname + '/controllers/typings',
+            routetypings: __dirname + '/routes/typings'
+        }*/
+    },
+    src: {
+        sprites: assets + '/sprites/**/*.*',
         images: assets + '/img/**/*.*',
-		less: assets + '/css/less/*.less',
+        less: assets + '/css/less/*.less',
         csslib: assets + '/css/lib/**/*.css',
         fonts: assets + '/fonts/**/*.*',
         scripts: {
@@ -25,9 +38,9 @@ var paths = {
             requires: assets + '/scripts/require/**/*.js',
             main: 'index.ts'
         }
-	},
+    },
     cliententrypoint: 'app.js',
-	dist: {
+    dist: {
         basedir: distDir,
         scripts: distDir + '/scripts',
         styles: distDir + '/styles',
@@ -42,74 +55,90 @@ var paths = {
     watchify = require('watchify'),
     //debowerify = require('debowerify'),
     _ = require('lodash'),
-	gulp = require('gulp'),
+    gulp = require('gulp'),
     source = require('vinyl-source-stream'),
     buffer = require('vinyl-buffer'),
     prefixer = require('gulp-autoprefixer'),
-	changed = require('gulp-changed'),
-	concat = require('gulp-concat'),
+    changed = require('gulp-changed'),
+    concat = require('gulp-concat'),
     gulpif = require('gulp-if'),
     ignore = require('gulp-ignore'),
-	less = require('gulp-less'),
-	minify = require('gulp-minify-css'),
+    less = require('gulp-less'),
+    minify = require('gulp-minify-css'),
     nodemon = require('gulp-nodemon'),
     plumber = require('gulp-plumber'),
     rimraf = require('gulp-rimraf'),
-	rename = require('gulp-rename'),
+    rename = require('gulp-rename'),
     sourcemaps = require('gulp-sourcemaps'),
-	uglify = require('gulp-uglify'),
+    uglify = require('gulp-uglify'),
     gutil = require('gulp-util'),
-	pipe = require('multipipe'),
-	spritesmith = require('gulp.spritesmith'),
+    pipe = require('multipipe'),
+    spritesmith = require('gulp.spritesmith'),
+    typescript15b = require('typescript'),
     ts = require('gulp-typescript'),
     merge = require('merge2'),
     pm2 = require('pm2'),
-	runSequence = require('run-sequence');
+    runSequence = require('run-sequence');
 
-gulp.plumbedSrc = function(){
-  return gulp.src.apply(gulp, arguments)
+gulp.plumbedSrc = function () {
+    return gulp.src.apply(gulp, arguments)
     .pipe(plumber(gutil.log));
 };
 
-gulp.task('clean', function() {
-  return gulp.src(paths.dist.files, { read: false })
+gulp.task('clean', function () {
+    return gulp.src(paths.dist.files, { read: false })
     .pipe(rimraf());
 });
 
-gulp.task('ts', function() {
+gulp.task('serverts', function () {
+    //Setting the base option in gulp.src to './' preserves the folder structure
+    //See http://stackoverflow.com/a/24412960/1122000
+    var serverTs = gulp.plumbedSrc(paths.server.ts, {base: './'})
+        .pipe(ts({ typescript: typescript15b, target: 'ES5', module: 'commonjs' }));
+    return serverTs.js.pipe(rename(function (path) {
+        //console.log('rename', path);
+    }))
+    .pipe(gulp.dest('./'));
+    /*return merge([
+        controllerTs.js.pipe(gulp.dest('./')),
+        controllerTs.dts.pipe(gulp.dest('./typings'))
+    ]);*/
+});
+
+gulp.task('ts', function () {
     var tsResult = gulp.plumbedSrc(paths.src.scripts.ts)
                     .pipe(ts({ typescript: require('typescript'), target: 'ES5', module: 'amd' }));
     tsResult.js.pipe(gulp.dest(paths.dist.scripts));
 });
 
 //Copy files from assets to dist as needed
-gulp.task('copy', function(){
+gulp.task('copy', function () {
     return merge([
         gulp.plumbedSrc(paths.src.scripts.requires).pipe(gulp.dest(paths.dist.scripts)),
-        gulp.plumbedSrc(paths.src.fonts).pipe(gulp.dest(paths.dist.fonts))        
+        gulp.plumbedSrc(paths.src.fonts).pipe(gulp.dest(paths.dist.fonts))
     ]);
 })
 
-gulp.task('jslib', function(){
-	return pipe(
-		gulp.plumbedSrc(paths.src.scripts.lib),
+gulp.task('jslib', function () {
+    return pipe(
+        gulp.plumbedSrc(paths.src.scripts.lib),
 		concat('lib.js'),
 		gulp.dest(paths.dist.scripts),
 		uglify(),
 		rename('lib.min.js'),
 		gulp.dest(paths.dist.scripts)
-	);
+    );
 });
 
-gulp.task('csslib', function(){
-	return pipe(
-		gulp.plumbedSrc(paths.src.csslib),
+gulp.task('csslib', function () {
+    return pipe(
+        gulp.plumbedSrc(paths.src.csslib),
 		concat('lib.min.css'),
 		gulp.dest(paths.dist.styles)
-	);
+    );
 });
 
-gulp.task('less', function() {
+gulp.task('less', function () {
     return pipe(
         gulp.plumbedSrc([paths.src.less, paths.dist.styles + '/sprite.css']),
         less(),
@@ -125,7 +154,7 @@ gulp.task('less', function() {
     );
 });
 
-gulp.task('sprite', function() {
+gulp.task('sprite', function () {
     var spriteData = gulp.plumbedSrc(paths.src.sprites).pipe(spritesmith({
         imgName: 'sprite.png',
         cssName: 'sprite.css'
@@ -133,59 +162,60 @@ gulp.task('sprite', function() {
     return merge([
         spriteData.img.pipe(gulp.dest(paths.dist.styles)),
         spriteData.css.pipe(gulp.dest(paths.dist.styles))
-    ]);    
+    ]);
 });
 
-gulp.task('watch', function() {
-    gulp.watch(paths.src.scripts.ts, ['ts']);    
+gulp.task('watch', function () {
+    gulp.watch(paths.src.scripts.ts, ['ts']);
+    gulp.watch(paths.server.ts, ['serverts']);
     gulp.watch(paths.src.images, ['images']);
     gulp.watch(paths.src.scripts.lib, ['jslib']);
-    gulp.watch(paths.src.less, function() {
+    gulp.watch(paths.src.less, function () {
         runSequence('sprite', 'less');
     });
-    gulp.watch(paths.src.sprites, function() {
+    gulp.watch(paths.src.sprites, function () {
         runSequence('sprite', 'less');
     });
     //gulp.watch(paths.src.fonts, ['fonts']);
 });
 
-gulp.task('pm2', function(){
-    pm2.connect(function() {
+gulp.task('pm2', function () {
+    pm2.connect(function () {
         pm2.start({
             script    : 'bin/www',         // Script to be run 
             //exec_mode : 'cluster',        // Allow your app to be clustered 
             //instances : 2,                // Optional: Scale your app by 4 
             //max_memory_restart : '100M'   // Optional: Restart your app if it reaches 100Mo 
-        }, function(err, apps) {
+        }, function (err, apps) {
             pm2.disconnect();
         });
     });
 });
 
 gulp.task('serve', function () {
-  nodemon({
-    script: 'bin/www',
-    ext: 'js html jade',
-    env: { 'NODE_ENV': 'development' }
-  });
+    nodemon({
+        script: 'bin/www',
+        ext: 'js html jade',
+        env: { 'NODE_ENV': 'development' }
+    });
 });
 
 //Compile TypeScripts and set up a basic development server using nodemon
-gulp.task('default', function(cb){
-    runSequence(['ts', 'watch', 'serve'], cb);
+gulp.task('default', function (cb) {
+    runSequence(['serverts', 'ts', 'watch', 'serve'], cb);
 });
 
 //Compile TypeScripts and set up PM2 to stage the app (not needed during development)
-gulp.task('stage', function(cb){
+gulp.task('stage', function (cb) {
     runSequence(['ts', 'watch', 'pm2']);
 });
 
 //Build the app only (no lib compilation or require file copying)
-gulp.task('buildapp', function(cb){
-   runSequence(['sprite', 'less', 'ts'], cb);
+gulp.task('buildapp', function (cb) {
+    runSequence(['sprite', 'less', 'ts', 'serverts'], cb);
 });
 
 //Build ERRYTING
-gulp.task('build', function(cb){
+gulp.task('build', function (cb) {
     runSequence('clean', ['copy', 'jslib', 'csslib'], 'buildapp', cb);
 });

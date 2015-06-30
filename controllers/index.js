@@ -1,7 +1,9 @@
-exports.home = function(req, res, next){
+/**
+ * GET /
+ * @param req
+ * @param res
+ * @returns {}
+ */
+exports.home = function (req, res) {
     res.render('index', { title: 'SmartRooms' });
-}
-
-exports.otherpage = function(req, res, next){
-    res.render('index', { title: 'SmartRooms' });
-}
+};

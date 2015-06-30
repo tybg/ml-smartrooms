@@ -7,7 +7,7 @@
     <RootNamespace>smartrooms</RootNamespace>
     <EnableTypeScript>true</EnableTypeScript>
     <TypeScriptSourceMap>true</TypeScriptSourceMap>
-    <TypeScriptModuleKind>CommonJS</TypeScriptModuleKind>
+    <TypeScriptModuleKind>commonjs</TypeScriptModuleKind>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -86,13 +86,6 @@
     <Content Include="public\build\fonts\RobotoDraftMedium.woff2" />
     <Content Include="public\build\fonts\RobotoDraftRegular.woff" />
     <Content Include="public\build\fonts\RobotoDraftRegular.woff2" />
-    <Content Include="public\build\images\examples\grasslight-thin.jpg" />
-    <Content Include="public\build\images\examples\SwedishRoyalCastle\nx.jpg" />
-    <Content Include="public\build\images\examples\SwedishRoyalCastle\ny.jpg" />
-    <Content Include="public\build\images\examples\SwedishRoyalCastle\nz.jpg" />
-    <Content Include="public\build\images\examples\SwedishRoyalCastle\px.jpg" />
-    <Content Include="public\build\images\examples\SwedishRoyalCastle\py.jpg" />
-    <Content Include="public\build\images\examples\SwedishRoyalCastle\pz.jpg" />
     <Content Include="public\build\styles\lib.min.css" />
     <Content Include="public\build\styles\main.css" />
     <Content Include="public\build\styles\main.min.css" />
@@ -105,6 +98,7 @@
     <Content Include="public\models\floorplan_floor1.blend" />
     <Content Include="public\models\floorplan_floor1.blend1" />
     <Content Include="public\models\floorplan_floor1.json" />
+    <Content Include="public\templates\floorplan\main.html" />
     <Content Include="README.md" />
     <Content Include="tsconfig.json" />
     <Content Include="typings\angularjs\README.md" />
@@ -118,6 +112,9 @@
     <Folder Include=".settings\" />
     <Folder Include="bin\" />
     <Folder Include="controllers\" />
+    <Folder Include="models\" />
+    <Folder Include="typings\express-validator\" />
+    <Folder Include="utils\" />
     <Folder Include="public\" />
     <Folder Include="public\assets\" />
     <Folder Include="public\assets\css\" />
@@ -131,18 +128,19 @@
     <Folder Include="public\assets\scripts\lib\" />
     <Folder Include="public\assets\scripts\lib\three\" />
     <Folder Include="public\assets\scripts\controllers\" />
+    <Folder Include="public\assets\scripts\directives\" />
     <Folder Include="public\assets\scripts\require\" />
     <Folder Include="public\assets\sprites\" />
     <Folder Include="public\build\" />
     <Folder Include="public\build\fonts\" />
     <Folder Include="public\build\images\" />
-    <Folder Include="public\build\images\examples\" />
-    <Folder Include="public\build\images\examples\SwedishRoyalCastle\" />
     <Folder Include="public\build\scripts\" />
     <Folder Include="public\build\scripts\controllers\" />
     <Folder Include="public\build\sprites\" />
     <Folder Include="public\build\styles\" />
     <Folder Include="public\models\" />
+    <Folder Include="public\templates\" />
+    <Folder Include="public\templates\floorplan\" />
     <Folder Include="routes\" />
     <Folder Include="typings\" />
     <Folder Include="typings\angular-growl-v2\" />
@@ -170,6 +168,7 @@
     <Folder Include="typings\require\" />
     <Folder Include="typings\restangular\" />
     <Folder Include="typings\ripples\" />
+    <Folder Include="typings\serve-static\" />
     <Folder Include="typings\socket.io-client\" />
     <Folder Include="typings\socket.io\" />
     <Folder Include="typings\threejs\" />
@@ -179,7 +178,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="app.js" />
-    <Compile Include="controllers\index.js" />
     <Compile Include="gulpfile.js" />
     <Compile Include="public\assets\scripts\lib\dat-gui.js" />
     <Compile Include="public\assets\scripts\require\angular-animate.min.js" />
@@ -192,6 +190,7 @@
     <Compile Include="public\assets\scripts\require\angular-strap.tpl.min.js" />
     <Compile Include="public\assets\scripts\require\angular-touch.min.js" />
     <Compile Include="public\assets\scripts\require\angular-ui-router.min.js" />
+    <Compile Include="public\assets\scripts\require\angular.js" />
     <Compile Include="public\assets\scripts\require\angular.min.js" />
     <Compile Include="public\assets\scripts\lib\lodash.js" />
     <Compile Include="public\assets\scripts\lib\material.js" />
@@ -217,6 +216,7 @@
     <Compile Include="public\build\scripts\angular-strap.tpl.min.js" />
     <Compile Include="public\build\scripts\angular-touch.min.js" />
     <Compile Include="public\build\scripts\angular-ui-router.min.js" />
+    <Compile Include="public\build\scripts\angular.js" />
     <Compile Include="public\build\scripts\angular.min.js" />
     <Compile Include="public\build\scripts\angularAMD.min.js" />
     <Compile Include="public\build\scripts\app.js" />
@@ -232,16 +232,24 @@
     <Compile Include="public\build\scripts\socket.io.min.js" />
     <Compile Include="public\build\scripts\threegui.js" />
     <Compile Include="public\build\scripts\ThreePsTutorial.js" />
-    <Compile Include="routes\index.js" />
     <Compile Include="routes\users.js" />
   </ItemGroup>
   <ItemGroup>
-    <TypeScriptCompile Include="public\assets\scripts\angularAMD.d.ts" />
-    <TypeScriptCompile Include="public\assets\scripts\app.ts" />
+    <TypeScriptCompile Include="controllers\bookings_ctrl.ts" />
+    <TypeScriptCompile Include="controllers\index.ts" />
+    <TypeScriptCompile Include="controllers\rooms_ctrl.ts" />
+    <TypeScriptCompile Include="models\baseschema.ts" />
+    <TypeScriptCompile Include="models\booking.ts" />
+    <TypeScriptCompile Include="models\room.ts" />
+    <TypeScriptCompile Include="public\assets\scripts\ambient.d.ts" />
     <TypeScriptCompile Include="public\assets\scripts\controllers\floorplan.ts" />
     <TypeScriptCompile Include="public\assets\scripts\main.ts" />
+    <TypeScriptCompile Include="public\assets\scripts\directives\NgGlobals.ts" />
     <TypeScriptCompile Include="public\assets\scripts\threegui.ts" />
     <TypeScriptCompile Include="public\assets\scripts\ThreePsTutorial.ts" />
+    <TypeScriptCompile Include="routes\bookings_routes.ts" />
+    <TypeScriptCompile Include="routes\index_routes.ts" />
+    <TypeScriptCompile Include="routes\rooms_routes.ts" />
     <TypeScriptCompile Include="typings\angular-growl-v2\angular-growl-v2.d.ts" />
     <TypeScriptCompile Include="typings\angular-ui-bootstrap\angular-ui-bootstrap.d.ts" />
     <TypeScriptCompile Include="typings\angular-ui-router\angular-ui-router.d.ts" />
@@ -259,6 +267,7 @@
     <TypeScriptCompile Include="typings\browserify\browserify.d.ts" />
     <TypeScriptCompile Include="typings\dat\dat.d.ts" />
     <TypeScriptCompile Include="typings\domready\domready.d.ts" />
+    <TypeScriptCompile Include="typings\express-validator\express-validator.d.ts" />
     <TypeScriptCompile Include="typings\express\express.d.ts" />
     <TypeScriptCompile Include="typings\gulp-autoprefixer\gulp-autoprefixer.d.ts" />
     <TypeScriptCompile Include="typings\gulp-concat\gulp-concat.d.ts" />
@@ -276,6 +285,7 @@
     <TypeScriptCompile Include="typings\require\require.d.ts" />
     <TypeScriptCompile Include="typings\restangular\restangular.d.ts" />
     <TypeScriptCompile Include="typings\ripples\ripples.d.ts" />
+    <TypeScriptCompile Include="typings\serve-static\serve-static.d.ts" />
     <TypeScriptCompile Include="typings\socket.io-client\socket.io-client.d.ts" />
     <TypeScriptCompile Include="typings\socket.io\socket.io.d.ts" />
     <TypeScriptCompile Include="typings\threejs\detector.d.ts" />
@@ -293,8 +303,12 @@
     <TypeScriptCompile Include="typings\tween.js\tween.js.d.ts" />
     <TypeScriptCompile Include="typings\webrtc\MediaStream.d.ts" />
     <TypeScriptCompile Include="typings\webrtc\RTCPeerConnection.d.ts" />
+    <TypeScriptCompile Include="utils\mixins.ts" />
   </ItemGroup>
   <!-- Do not delete the following Import Project.  While this appears to do nothing it is a marker for setting TypeScript properties before our import that depends on them. -->
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <TypeScriptTarget>ES5</TypeScriptTarget>
+  </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="False" />
   <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsTools.targets" />
   <ProjectExtensions>

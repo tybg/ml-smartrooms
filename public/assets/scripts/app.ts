@@ -23,11 +23,12 @@ import floorplan = require('controllers/floorplan');
 import globaldirectives = require('directives/NgGlobals');
 import lib = require('lib');
 
+//Instantiate angular modules
 var fpCtrl = new floorplan.Floorplan();
 var globalDirectives = new globaldirectives.GlobalDirectives();
+//Force TS compiler to include these
 var blah = [angularRoute, restangular, uiRouter, lib];
 
-//import angularAMD = require('angularAMD');
 var app = angular.module('smartrooms', ['smartrooms.floorplancontrollers', 'smartrooms.globaldirectives', 'restangular', 'ui.router']);
 app.config(['$httpProvider', 'RestangularProvider', '$stateProvider', '$urlRouterProvider', ($httpProvider : ng.IHttpProvider, RestangularProvider : restangular.IProvider, $stateProvider : router.IStateProvider, $urlRouterProvider : ng.route.IRouteProvider) => {
     $urlRouterProvider.otherwise('/');
