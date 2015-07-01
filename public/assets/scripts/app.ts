@@ -29,7 +29,7 @@ var blah = [angularRoute, restangular, uiRouter, lib, ProviderModule, Controller
 
 var app = angular.module('smartrooms', ['smartrooms.providers', 'smartrooms.directives', 'smartrooms.controllers', 'restangular', 'ui.router']);
 app.config(['$httpProvider', 'RestangularProvider', '$stateProvider', '$urlRouterProvider', ($httpProvider : ng.IHttpProvider, RestangularProvider : restangular.IProvider, $stateProvider : router.IStateProvider, $urlRouterProvider : ng.route.IRouteProvider) => {
-    $urlRouterProvider.otherwise('/');
+    $urlRouterProvider.otherwise('/floorplan');
     RestangularProvider.setResponseExtractor((resp, oper, url) => {
         //console.log('OnResponse', resp, oper, url);
         var newResponse = resp;
@@ -64,10 +64,15 @@ app.config(['$httpProvider', 'RestangularProvider', '$stateProvider', '$urlRoute
         return newResponse.Results !== undefined ? newResponse.Results :
             newResponse.Data !== undefined ? newResponse.Data : newResponse;
     });
-    $stateProvider.state('home', {
-        url: '/',
+    $stateProvider
+    .state('floorplan', {
+        url: '/floorplan',
         controller: 'FloorplanViewCtrl',
         template: '<div id="floorplandiv"><div floorplan-view></div></div>'
+    })
+    .state('bookings', {
+        url: '/bookings',
+        template: '<p>Placeholder</p>'
     });
 }]);
 

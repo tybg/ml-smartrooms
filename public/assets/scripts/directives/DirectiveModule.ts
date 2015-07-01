@@ -8,7 +8,7 @@ import FloorplanView = require('./FloorplanView');
 var moduleDeclaration = (() => {
     console.log('declaring directive module');
     angular.module('smartrooms.directives', [])
-        .directive('floorplanView', FloorplanView)
+        .directive('floorplanView', FloorplanView.FloorplanViewDirective.Factory())
         .directive('withRipples', NgGlobals.ripplesDirective)
         .directive('withripples', NgGlobals.ripplesDirective)
         .directive('cardImage', NgGlobals.ripplesDirective)

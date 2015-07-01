@@ -12,8 +12,6 @@
 /// <reference path="../../../typings/domready/domready.d.ts" />
 /// <reference path="../../../typings/socket.io-client/socket.io-client.d.ts" />
 "use strict";
-//import domready = require('domready');
-//import ThreePsTutorial = require('ThreePsTutorial');
 var angular = require('angular');
 var angularRoute = require('angular-route');
 var restangular = require('restangular');
@@ -22,23 +20,18 @@ var ProviderModule = require('providers/ProviderModule');
 var ControllerModule = require('controllers/ControllerModule');
 var DirectiveModule = require('directives/DirectiveModule');
 var lib = require('lib');
-//Force TS compiler to include these
 var blah = [angularRoute, restangular, uiRouter, lib, ProviderModule, ControllerModule, DirectiveModule];
 var app = angular.module('smartrooms', ['smartrooms.providers', 'smartrooms.directives', 'smartrooms.controllers', 'restangular', 'ui.router']);
 app.config(['$httpProvider', 'RestangularProvider', '$stateProvider', '$urlRouterProvider', function ($httpProvider, RestangularProvider, $stateProvider, $urlRouterProvider) {
-        $urlRouterProvider.otherwise('/');
+        $urlRouterProvider.otherwise('/floorplan');
         RestangularProvider.setResponseExtractor(function (resp, oper, url) {
-            //console.log('OnResponse', resp, oper, url);
             var newResponse = resp;
             if (angular.isArray(resp)) {
-                //console.log('is array');
                 newResponse.originalElement = null;
                 angular.forEach(newResponse, function (value, keyOrIdx) {
-                    //Copy each original (un-"Restangularized") value to an originalElement property on the value
                     if (parseInt(keyOrIdx) === keyOrIdx) {
                         if (newResponse.originalElement === null)
                             newResponse.originalElement = [];
-                        //Copy the value to an originalElement object on the response object itself (so we can access each all originalValues from one location)
                         newResponse.originalElement.push(angular.copy(value));
                         value.originalElement = angular.copy(value);
                     }
@@ -61,13 +54,17 @@ app.config(['$httpProvider', 'RestangularProvider', '$stateProvider', '$urlRoute
             return newResponse.Results !== undefined ? newResponse.Results :
                 newResponse.Data !== undefined ? newResponse.Data : newResponse;
         });
-        $stateProvider.state('home', {
-            url: '/',
+        $stateProvider
+            .state('floorplan', {
+            url: '/floorplan',
             controller: 'FloorplanViewCtrl',
             template: '<div id="floorplandiv"><div floorplan-view></div></div>'
+        })
+            .state('bookings', {
+            url: '/bookings',
+            template: '<p>Placeholder</p>'
         });
     }]);
 app.run(function () {
 });
 angular.bootstrap(document, ['smartrooms']);
-//# sourceMappingURL=app.js.map

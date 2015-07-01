@@ -9,7 +9,7 @@ export interface MapWithKeys {
 }
 
 export class EnvMapper implements MapWithKeys {
-	none : void;
+	none;
 	reflection : THREE.Texture;
 	refraction : THREE.Texture;
 	keys : string[] = ['none', 'reflection', 'refraction'];
@@ -31,7 +31,7 @@ export class EnvMapper implements MapWithKeys {
 }
 
 export class TextureMapper implements MapWithKeys {
-	none: void;
+	none;
 	keys: string[] = ['none', 'grass']
 	grass: THREE.Texture;		
 	constructor() {

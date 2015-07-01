@@ -15,13 +15,16 @@ html
             span.icon-bar
             span.icon-bar
             span.icon-bar
-          a.navbar-brand.with-ripples(href='#') SmartRooms
+          a.navbar-brand.with-ripples(ui-sref='floorplan') SmartRooms
         #navbar.collapse.navbar-collapse
           ul.nav.navbar-nav
-            li.active
-              a.with-ripples(href='#') Home              
+            li(ui-sref-active='active')
+              a.with-ripples(ui-sref='floorplan') Home
+            li(ui-sref-active='active')
+              a.with-ripples(ui-sref='bookings') Bookings
         // /.nav-collapse
     .container-fluid
+      div(ui-view='hero')
       block content
     //script(type='text/javascript', src='/build/scripts/lib.min.js')
     script(type='text/javascript', data-main='/build/scripts/main' src='/build/scripts/require.min.js')
