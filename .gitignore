@@ -29,3 +29,5 @@ node_modules/*
 
 bower_components
 public/build
+
+.ntvs_analysis.dat

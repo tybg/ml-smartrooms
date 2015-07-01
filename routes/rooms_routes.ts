@@ -9,6 +9,7 @@ var router = express.Router();
 var roomsRoutes = (io: SocketIOClient.Socket) => {
     router.get('/', controller.get_rooms);
     router.get('/:id', controller.get_room);
+    router.get('/:id/bookings', controller.get_room_bookings);
     router.post('/', controller.create_room);
     router.post('/:id/bookings', (req: controller.BookRoomRequest, res: express.Response, next: Function) => {
         controller.room_post_bookings(req, res, next, io);

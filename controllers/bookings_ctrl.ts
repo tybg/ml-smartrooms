@@ -8,8 +8,13 @@ import _ = require('lodash');
 import moment = require('moment');
 import mongoose = require('mongoose');
 import express = require('express');
-import bookingDbo = require('../models/booking');
-var Booking = bookingDbo.Booking.model;
+import IBooking = require('../models/IBooking');
+import booking = require('../models/Booking');
+//import room = require('../models/Room');
+
+var BookingModel = booking.Model;
+//var RoomModel = room.Model;
+
 
 export interface GetBookingRequest extends express.Request {
     params: { id: string };
@@ -20,12 +25,10 @@ export interface GetBookingRequest extends express.Request {
  * @param res 
  * @returns {} 
  */
-export var get_bookings = (req: express.Request, res: express.Response) => {
-    Booking.find({}, (err, docs) => {
-        if (err)
-            throw err;
-        res.json(docs);
-    });
+export var get_bookings = (req: express.Request, res: express.Response, next: Function) => {
+    BookingModel.find({}).populate('room').then((bs) => {
+        res.json(bs);
+    }, (err) => next(err));
 };
 
 /**
@@ -35,7 +38,7 @@ export var get_bookings = (req: express.Request, res: express.Response) => {
  * @param io 
  */
 export var get_booking = (req: GetBookingRequest, res: express.Response, next : Function) => {
-    Booking.findById(req.params.id).then((bs) => {
-        res.json(bs);
+    BookingModel.findById(req.params.id).then((b) => {
+        res.json(b);
     }, (err) => next(err));
 };

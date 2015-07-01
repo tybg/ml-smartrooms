@@ -19,17 +19,15 @@ import angular = require('angular');
 import angularRoute = require('angular-route');
 import restangular = require('restangular');
 import uiRouter = require('angular.ui.router');
-import floorplan = require('controllers/floorplan');
-import globaldirectives = require('directives/NgGlobals');
+import ProviderModule = require('providers/ProviderModule');
+import ControllerModule = require('controllers/ControllerModule');
+import DirectiveModule = require('directives/DirectiveModule');
 import lib = require('lib');
 
-//Instantiate angular modules
-var fpCtrl = new floorplan.Floorplan();
-var globalDirectives = new globaldirectives.GlobalDirectives();
 //Force TS compiler to include these
-var blah = [angularRoute, restangular, uiRouter, lib];
+var blah = [angularRoute, restangular, uiRouter, lib, ProviderModule, ControllerModule, DirectiveModule];
 
-var app = angular.module('smartrooms', ['smartrooms.floorplancontrollers', 'smartrooms.globaldirectives', 'restangular', 'ui.router']);
+var app = angular.module('smartrooms', ['smartrooms.providers', 'smartrooms.directives', 'smartrooms.controllers', 'restangular', 'ui.router']);
 app.config(['$httpProvider', 'RestangularProvider', '$stateProvider', '$urlRouterProvider', ($httpProvider : ng.IHttpProvider, RestangularProvider : restangular.IProvider, $stateProvider : router.IStateProvider, $urlRouterProvider : ng.route.IRouteProvider) => {
     $urlRouterProvider.otherwise('/');
     RestangularProvider.setResponseExtractor((resp, oper, url) => {

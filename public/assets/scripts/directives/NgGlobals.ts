@@ -1,9 +1,7 @@
-﻿
-import $ = require('jquery');
+﻿import $ = require('jquery');
 
-export class GlobalDirectives {
-    module: ng.IModule;
-    inputDirective: ng.IDirectiveFactory = () => {
+class GlobalDirectives {
+    static inputDirective: ng.IDirectiveFactory = () => {
         return {
             restrict: 'E',
             link($scope, $element) {
@@ -20,7 +18,7 @@ export class GlobalDirectives {
         }
     };
     
-    ripplesDirective: ng.IDirectiveFactory = () => {
+    static ripplesDirective: ng.IDirectiveFactory = () => {
         return {
             restrict: 'C',
             link($scope, $element) {
@@ -31,17 +29,6 @@ export class GlobalDirectives {
             }
         }
     }
-
-    inputElements = ['input', 'textarea', 'select'];
-    constructor() {
-        this.module = angular.module('smartrooms.globaldirectives', []);
-        for (let i = 0; i < this.inputElements.length; i++) {
-            this.module.directive(this.inputElements[i], this.inputDirective);
-        }
-
-        this.module.directive('withRipples', this.ripplesDirective);
-        this.module.directive('withripples', this.ripplesDirective);
-        this.module.directive('cardImage', this.ripplesDirective);
-        this.module.directive('btn', this.ripplesDirective);
-    }
 }
+
+export = GlobalDirectives;

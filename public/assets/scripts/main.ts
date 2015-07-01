@@ -1,5 +1,3 @@
-/// <reference path="../../../typings/require/require.d.ts" />
-
 "use strict";
 
 require.config({

@@ -1,32 +1,20 @@
 ﻿import mongoose = require('mongoose');
-import baseschema = require('baseschema');
-import room = require('room');
-/**
- * Define the shape of the Booking Schema in Mongoose
- */
-export interface IBookingSchema extends baseschema.IBaseSchema {
-    start: Date,
-    end: Date,
-    subject: string,
-    details: string,
-    isdeleted: boolean,
-    room: any;
-}
+import IBooking = require("IBooking");
 
-export class Booking implements baseschema.MongooseSchemaBuilder<IBookingSchema> {
-    static schema = new mongoose.Schema({
-        created: { type: Date, default: Date.now },
-        modified: { type: Date, default: Date.now },
-        start: { type: Date },
-        end: { type: Date },
-        subject: String,
-        details: String,
-        isdeleted: { type: Boolean, default: false },
-        room: {
-            type: Number,
-            ref: 'Room'
-        }
-    });
+export interface IBookingModel extends IBooking, mongoose.Document { }
 
-    static model: mongoose.Model<IBookingSchema> = <mongoose.Model<IBookingSchema>>(mongoose.model('Booking', Booking.schema));
-}
+var schema = new mongoose.Schema({
+    created: { type: Date, default: Date.now },
+    modified: { type: Date, default: Date.now },
+    start: { type: Date },
+    end: { type: Date },
+    subject: String,
+    details: String,
+    isdeleted: { type: Boolean, default: false },
+    room: {
+        type: Number,
+        ref: 'Room'
+    }
+});
+
+export var Model: mongoose.Model<IBookingModel> = <mongoose.Model<IBookingModel>>(mongoose.model('Booking', schema));

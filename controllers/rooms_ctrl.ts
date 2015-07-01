@@ -9,10 +9,12 @@ import _ = require('lodash');
 import moment = require('moment');
 import mongoose = require('mongoose');
 import express = require('express');
-import bookingDbo = require('../models/booking');
-import roomDbo = require('../models/room');
-var Booking = bookingDbo.Booking.model;
-var Room = roomDbo.Room.model;
+import IBooking = require('../models/IBooking');
+import booking = require('../models/Booking');
+import IRoom = require('../models/IRoom');
+import room = require('../models/Room');
+var BookingModel = booking.Model;
+var RoomModel = room.Model;
 
 export interface GetRoomRequest extends express.Request {
     params: { id: string };
@@ -20,7 +22,7 @@ export interface GetRoomRequest extends express.Request {
 
 export interface BookRoomRequest extends express.Request {
     params: { id: string };
-    body: bookingDbo.IBookingSchema;
+    body: IBooking;
 }
 
 /**
@@ -30,28 +32,39 @@ export interface BookRoomRequest extends express.Request {
  * @returns {} 
  */
 export var get_rooms = (req: express.Request, res: express.Response, next : Function) => {
-    Room.find({}).then((rooms) => {
+    RoomModel.find({}).then((rooms) => {
         res.json(rooms);
     }, (err) => next(err));
 };
 
+/**
+ * GET /rooms/:id
+ * @param req 
+ * @param res 
+ * @param next 
+ */
 export var get_room = (req: GetRoomRequest, res: express.Response, next: Function) => {
-    Room.findById(req.params.id).populate('bookings').then((r) => {
+    RoomModel.findById(req.params.id).then((r) => {
         res.json(r);
     }, (err) => next(err));
 };
+
+export var get_room_bookings = (req: GetRoomRequest, res : express.Response, next: Function) => {
+    BookingModel.find({ room: req.params.id }).then(bs => {
+        res.json(bs);
+    }, err => next(err));
+}
 
 /**
  * POST /rooms
  * @param req 
  * @param res 
- * @param next 
- * @returns {} 
+ * @param next
  */
 export var create_room = (req: express.Request, res: express.Response, next: Function) => {
     req.checkBody('displayname', 'Invalid displayname').notEmpty().isAlpha();
     console.log(req.body);
-    Room.create(req.body).then((r) => {
+    RoomModel.create(req.body).then((r) => {
         res.json(r);
     }, (err) => next(err));
 }
@@ -63,9 +76,9 @@ export var create_room = (req: express.Request, res: express.Response, next: Fun
  * @param io 
  */
 export var room_post_bookings = (req: BookRoomRequest, res: express.Response, next: Function, io: SocketIOClient.Socket) => {
-    var reqDayStart = moment(req.body.start).startOf('day');
-    var reqDayEnd = moment(req.body.end).endOf('day');
-    Booking.find({
+    var reqDayStart = moment.utc(req.body.start).startOf('day');
+    var reqDayEnd = moment.utc(req.body.end).endOf('day');
+    BookingModel.find({
         start: {
             $gte: reqDayStart.toDate()
         },
@@ -73,20 +86,11 @@ export var room_post_bookings = (req: BookRoomRequest, res: express.Response, ne
             $lte: reqDayEnd.toDate()
         }
     }).then((bs) => {
-        console.log('found ' + bs.length + ' bookings between ' + reqDayStart.toISOString() + ' and ' + reqDayEnd.toISOString());
-        var newBooking = Booking.create({
-            start: req.body.start,
-            end: req.body.end,
-            subject: req.body.subject,
-            details: req.body.details,
-            isdeleted: req.body.isdeleted,
-            room: req.params.id
+        //console.log('found ' + bs.length + ' bookings between ' + reqDayStart.toISOString() + ' and ' + reqDayEnd.toISOString());
+        var newBooking = new BookingModel(_.assign({}, req.body));
+        newBooking.save(err => {
+            if (err) next(err);
+            res.json(newBooking);
         });
-        return newBooking;
-    }, err => next(err)).then<bookingDbo.IBookingSchema>((newBooking: bookingDbo.IBookingSchema) => {
-        res.json(newBooking);
-    }, err => next(err));
-    /*Room.findById(req.params.id).then((r) => {
-        r.populate('bookings');
-    }, (err) => next(err));*/
+    });
 };
